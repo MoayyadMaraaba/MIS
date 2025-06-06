@@ -5,7 +5,7 @@ import os
 load_dotenv()
 
 def createConnection():
-    client = MongoClient("mongodb://localhost:27017/")
+    client = MongoClient(os.environ['mongo_uri'])
     db = client[os.environ['database']]
     return db
 

@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../../Styles/main.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        header {
+            height: 100px;
+            background-color: var(--DARK-COLOR);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .username {
+            color: var(--FONT-LCOLOR);
+        }
+
+        main {
+            display: flex;
+        }
+
+        a {
+            display: block;
+        }
+
+        .sidebar {
+            width: 80px;
+            height: calc(100vh);
+            background-color: var(--DARK-COLOR);
+            transition: all 300ms ease-in-out;
+        }
+
+        .sidebar:hover {
+            width: 360px;
+        }
+
+        .sidebar__item {
+            display: flex;
+            height: 80px;
+            transition: all 300ms ease-in-out;
+        }
+
+
+        .head {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            color: #fff;
+            height: 100px;
+        }
+
+
+
+
+        .sidebar__icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 80px;
+            font-size: 1.1rem;
+            color: var(--FONT-LCOLOR);
+        }
+
+        .sidebar__content {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 280px;
+            height: 80px;
+            color: var(--FONT-LCOLOR);
+            font-size: 1.1rem;
+            font-weight: 500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 300ms ease-in-out;
+        }
+
+        .show__content {
+            display: flex;
+            opacity: 1;
+        }
+
+
+        .sidebar__item:hover {
+            background-color: var(--PRIMARY-COLOR);
+        }
+
+        .head:hover {
+            background-color: var(--DARK-COLOR);
+        }
+
+        .sidebar:hover .sidebar__content {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .content {
+            width: 100%;
+        }
+
+        /* Welcome section */
+        .welcome__section {
+            width: 100%;
+            height: 100px;
+            padding: 0 4rem;
+            display: flex;
+            /* justify-content: space-between; */
+            align-items: center;
+            border-bottom: 1px solid #bbb;
+
+        }
+
+        .welcome__title {
+            width: 33.33%;
+        }
+
+
+        .welcome__search {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 33.33%;
+
+        }
+
+        .welcome__role {
+            width: 33.33%;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .welcome__title h2 {
+            font-weight: 500;
+        }
+
+
+        .search__input {
+            width: 400px;
+            height: 45px;
+            border-radius: 5px;
+            border: 1px solid grey;
+            padding: 0 10px;
+        }
+
+        .search__button {
+            width: 45px;
+            height: 45px;
+            background-color: var(--DARK-COLOR);
+            border-radius: 5px;
+            margin: 0 10px;
+            color: #fff;
+        }
+
+        /* Welcome section */
+
+        /* Statistics section */
+        .statistics {
+            padding: 2rem 4rem 0 4rem;
+        }
+
+        .statistics__title {
+            font-weight: 500;
+        }
+
+        .boxes1 {
+            width: 100%;
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .box1 {
+            width: calc(100% / 3);
+            height: 200px;
+            border-radius: 10px;
+            border: 1px solid #bbb;
+        }
+
+        .box1__title {
+            display: flex;
+            justify-content: center;
+            padding: 2rem 2rem 0 2rem;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .box1__icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: var(--PRIMARY-COLOR);
+            background-color: var(--DARK-COLOR);
+        }
+
+        .box1__content {
+            font-weight: 500;
+            font-size: 1.8rem;
+        }
+
+        .box1__number {
+            padding-top: 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .incidents {
+            padding: 2rem 4rem 0 4rem;
+        }
+
+        .incidents__title {
+            font-weight: 500;
+        }
+
+
+        .s {
+            border-top-left-radius: 10px;
+        }
+
+        .rounded-table {
+            margin-top: 1.5rem;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
+            border: 1px solid #bbb;
+            background-color: white;
+        }
+
+        .rounded-table th,
+        .rounded-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+
+        .rounded-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .scrollable {
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .rounded-table thead tr:first-child th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .rounded-table thead tr:first-child th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        .rounded-table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 12px;
+        }
+
+        .rounded-table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 12px;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .view__incident {
+            width: 45px;
+            height: 45px;
+            border-radius: 5px;
+            color: #fff;
+            background-color: var(--DARK-COLOR);
+            cursor: pointer;
+            transition: all 300ms ease-in-out;
+        }
+
+        .view__incident:hover {
+            background-color: #000f08ce;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .status,
+        .status1 {
+            min-width: 120px;
+            max-width: 180px;
+        }
+
+        .status__button,
+        .status1__button {
+            width: 140px;
+            height: 45px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 300ms ease-in-out;
+        }
+
+        .status__list,
+        .status1__list {
+            width: 140px;
+            position: relative;
+            z-index: 3500;
+            list-style-type: none;
+            border: 1px solid #bbb;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            visibility: hidden;
+            opacity: 0;
+            display: none;
+            transition: all 300ms ease-in-out;
+        }
+
+        .status__item,
+        .status1__item {
+            padding: 1rem;
+            transition: all 300ms ease-in-out;
+        }
+
+        .status__item:hover,
+        .status1__item:hover {
+            cursor: pointer;
+            color: #fff;
+            background-color: var(--DARK-COLOR);
+        }
+
+        .remove__radius {
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+            border-bottom: 0px;
+        }
+
+        .show__list {
+            opacity: 1;
+            visibility: visible;
+            display: block;
+        }
+
+        .text__input {
+            width: 260px;
+            height: 45px;
+            border: 1px solid #bbb;
+            padding: 0 10px;
+            border-radius: 5px;
+            transition: all 300ms ease-in-out;
+        }
+
+        .text__input:focus {
+            border: 1px solid var(--DARK-COLOR);
+        }
+
+        .flex {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .popup {
+            position: fixed;
+            width: 100%;
+            left: 0;
+            z-index: 4000;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .showPopup {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dispage {
+            width: 100%;
+            min-height: 100vh;
+            background-color: #12121280;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup__wrapper {
+            background-color: #ddd;
+            width: 700px;
+            height: 600px;
+            border-radius: 10px;
+            position: relative;
+            padding: 2rem;
+
+        }
+
+        .close__btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--DARK-COLOR);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 300ms ease-in-out;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .popup__title {
+            text-align: center;
+            font-weight: 400;
+            padding-top: 1rem;
+        }
+
+        #map {
+            margin-top: 3rem;
+            border-radius: 10px;
+            height: 400px;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 0 1rem;
+            color: #fff;
+            border-radius: 5px;
+            height: 45px;
+            background-color: var(--DARK-COLOR);
+        }
+
+        .incident {
+            padding: 2rem 4rem 0 4rem;
+            display: none;
+        }
+
+        .evidence {
+            margin-bottom: 1rem;
+        }
+
+        .hide__button {
+            width: 100px;
+            height: 45px;
+            background-color: var(--DARK-COLOR);
+            color: #fff;
+            border-radius: 5px;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .find {
+            padding: 2rem 4rem 0 4rem;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <!--============= Sidebar =============-->
+        <aside class="sidebar">
+            <ul class="sidebar__list">
+                <li class="sidebar__item head">
+                    <h1>MIS</h1>
+                </li>
+                <li class="sidebar__item">
+                    <a href="index.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-table-columns"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Dashboard
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <a href="./ReportIncident.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-flag"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Report an Incident
+                        </span>
+                    </a>
+                </li>
+
+                <li class="sidebar__item">
+                    <a href="" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-right-from-bracket fa-rotate-180"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Logout
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+        <!--============= Sidebar =============-->
+
+        <!--============= Content =============-->
+        <div class="content">
+            <!--============= Header =============-->
+            <div class="welcome__section">
+                <div class="welcome__title">
+                    <h2>Welcome</h2>
+                </div>
+                <div class="welcome__search">
+                    <input type="text" class="search__input" placeholder="Search by report id" id="Search"
+                        name="query" />
+                    <button class="search__button" onclick="search()"><i
+                            class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <div class="welcome__role">
+                    <h3>Organization</h3>
+                </div>
+            </div>
+            <!--============= Header =============-->
+
+            <div class="scrollable">
+                <!--============= Statistics =============-->
+                <div class="statistics">
+                    <h2 class="statistics__title">Dashboard</h2>
+                    <div class="boxes1">
+                        <div class="box1">
+                            <div class="box1__title">
+                                <div class="box1__icon"><i class="fa-solid fa-person-falling"></i></div>
+                                <div class="box1__content">Incidents</div>
+                            </div>
+                            <div class="box1__number incidents__count">
+                                <h1></h1>
+                            </div>
+                        </div>
+                        <div class="box1">
+                            <div class="box1__title">
+                                <div class="box1__icon"><i class="fa-solid fa-camera"></i></div>
+                                <div class="box1__content">Evidences</div>
+                            </div>
+                            <div class="box1__number evidences__count">
+                                <h1></h1>
+                            </div>
+                        </div>
+                        <div class="box1">
+                            <div class="box1__title">
+                                <div class="box1__icon"><i class="fa-regular fa-user"></i></div>
+                                <div class="box1__content">Victims</div>
+                            </div>
+                            <div class="box1__number">
+                                <h1>65</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--============= Statistics =============-->
+
+                <!--============= Incidents =============-->
+                <div class="incidents">
+                    <h2 class="incidents__title">Incidents</h2>
+                    <div class="flex">
+                        <div class="filters">
+                            <div class="dropdown status">
+                                <button class="status__button" onclick="openDropdown()">Status : </button>
+                                <ul class="status__list">
+                                    <li class="status__item" onclick="selectStatus('New')">New</li>
+                                    <li class="status__item" onclick="selectStatus('Open')">Open</li>
+                                    <li class="status__item" onclick="selectStatus('Closed')">Closed</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <!--========= Country =========-->
+                            <input type="text" placeholder="Country" autocomplete="off" name="Country"
+                                class="text__input" id="Country" readonly>
+                            <!--========= Country =========-->
+                        </div>
+                        <div>
+                            <!--========= City =========-->
+                            <input type="text" placeholder="City" autocomplete="off" name="City" class="text__input"
+                                id="City" readonly>
+                            <!--========= City =========-->
+                        </div>
+
+                        <div>
+                            <input type="date" name="Date" class="text__input" id="Date">
+                        </div>
+
+                        <div>
+                            <button onclick="showPopup()" class="btn">View map</button>
+                        </div>
+
+                        <div>
+                            <button onclick="filter()" class="btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        </div>
+                    </div>
+
+
+                    <table class="rounded-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Reporter Type</th>
+                                <th>Status</th>
+                                <th>Create at</th>
+                                <th>Incident date</th>
+                                <th>Country</th>
+                                <th>View</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table__body">
+                        </tbody>
+                    </table>
+                </div>
+                <!--============= Incidents =============-->
+
+                <!--============= Incident =============-->
+                <div class="incident">
+                    <h2 class="incident__title"></h2>
+                    <h4 class="incident__location"></h4>
+                    <h4 class="incident__date"></h4>
+                    <div class="incident__evidences"></div>
+
+                    <div class="filters">
+                        <div class="dropdown status1">
+                            <button class="status1__button" onclick="openDropdown1()">Status : </button>
+                            <ul class="status1__list">
+                                <li class="status1__item" onclick="updateStatus('New')">New</li>
+                                <li class="status1__item" onclick="updateStatus('Open')">Open</li>
+                                <li class="status1__item" onclick="updateStatus('Closed')">Closed</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <button onclick="hideIncident()" class="hide__button">Hide</button>
+                </div>
+                <!--============= Incident =============-->
+
+                <div class="find">
+                    <!--========= violation =========-->
+                    <input type="text" placeholder="violation" autocomplete="off" name="violation" class="text__input"
+                        id="violation">
+                    <!--========= violation =========-->
+                    <button onclick="findCount()" class="btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+
+                    <h3 class="count">Count:</h3>
+                </div>
+            </div>
+            <!--============= Content =============-->
+
+
+        </div>
+        <div class="popup">
+            <div class="dispage">
+                <div class="popup__wrapper">
+                    <button class="close__btn" id="closePopup" onclick="showPopup()">X</button>
+                    <div class="input">
+                        <div id="map"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://kit.fontawesome.com/0d049d0946.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        let isFilterOpen = false;
+        let isFilterOpen1 = false;
+        let isPopupOpen = false;
+        let status = "";
+
+        async function loadNumbers() {
+            const response = await fetch(`http://localhost:8000/Reports/Count`, {
+                method: "GET",
+            });
+
+            const result = await response.json();
+            $(".incidents__count h1").text(result.Incidents);
+            $(".evidences__count h1").text(result.Evidences);
+
+        }
+
+        loadNumbers();
+
+        function openDropdown() {
+            if (!isFilterOpen) {
+                $(".status__button").addClass("remove__radius");
+                setTimeout(() => {
+                    $(".status__list").addClass("show__list");
+                }, 105);
+                isFilterOpen = true;
+            } else {
+                $(".status__list").removeClass("show__list")
+                setTimeout(() => {
+                    $(".status__button").removeClass("remove__radius");
+                }, 105);
+                isFilterOpen = false;
+            }
+        }
+
+        function openDropdown1() {
+            if (!isFilterOpen1) {
+                $(".status1__button").addClass("remove__radius");
+                setTimeout(() => {
+                    $(".status1__list").addClass("show__list");
+                }, 105);
+                isFilterOpen1 = true;
+            } else {
+                $(".status1__list").removeClass("show__list")
+                setTimeout(() => {
+                    $(".status1__button").removeClass("remove__radius");
+                }, 105);
+                isFilterOpen1 = false;
+            }
+        }
+
+        function selectStatus(s) {
+            if (s == status) {
+                status = "";
+            } else {
+                status = s;
+                $(".status__button").text("Status : " + s);
+                openDropdown();
+            }
+        }
+
+        function showPopup() {
+            if (!isPopupOpen) {
+                $(".popup").addClass("showPopup");
+                isPopupOpen = true;
+            } else {
+                $(".popup").removeClass("showPopup");
+                isPopupOpen = false;
+            }
+        }
+
+
+        async function loadReports(status, country, city, date) {
+            const response = await fetch(`http://localhost:8000/Reports?status=${status}&country=${country}&city=${city}&date=${date}`, {
+                method: "GET",
+            });
+
+            const result = await response.json();
+            for (let i = 0; i < result.incidents.length; i++) {
+                const report = result.incidents[i];
+                const reportJSON = encodeURIComponent(JSON.stringify(report));
+
+                $(".table__body").append(`
+                                    <tr>
+                                        <td>${report.report_id}</td>
+                                        <td>${report.reporter_type}</td>
+                                        <td>${report.status}</td>
+                                        <td>${report.created_at.split("T")[0]}</td>
+                                        <td>${report.incident_details.date.split("T")[0]}</td>
+                                        <td>${report.incident_details.location.country}</td>
+                                        <td>
+                                            <button class="view__incident" data-report='${reportJSON}' onclick="viewIncident(this)"><i class="fa-regular fa-eye"></i></button>
+                                        </td>
+                                    </tr>
+                            `);
+            }
+        }
+
+        loadReports("", "", "", "");
+
+        function filter() {
+            $(".table__body").html("");
+
+            let selected_status = status;
+            let country = $("#Country").val();
+            let city = $("#City").val();
+            let date = $("#Date").val();
+
+            loadReports(selected_status, country, city, date);
+        }
+
+        async function search() {
+            let sq = $("#Search").val();
+
+            const response = await fetch(`http://localhost:8000/Reports/search?search_query=${sq}`, {
+                method: "GET",
+            });
+
+            const result = await response.json();
+            $(".table__body").html("");
+            for (let i = 0; i < result.incidents.length; i++) {
+                const report = result.incidents[i];
+
+                $(".table__body").append(`
+                                    <tr>
+                                        <td>${report.report_id}</td>
+                                        <td>${report.reporter_type}</td>
+                                        <td>${report.status}</td>
+                                        <td>${report.created_at.split("T")[0]}</td>
+                                        <td>${report.incident_details.date.split("T")[0]}</td>
+                                        <td>${report.incident_details.location.country}</td>
+                                        <td>
+                                            <button class="view__incident" data-report='${reportJSON}' onclick="viewIncident(this)"><i class="fa-regular fa-eye"></i></button>
+                                        </td>
+                                    </tr>
+                            `);
+            }
+        }
+
+        let incident_report_id = 0;
+
+        function viewIncident(report) {
+            const reportData = JSON.parse(decodeURIComponent(report.getAttribute("data-report")));
+            incident_report_id = reportData._id;
+
+            $(".incident").show();
+            $(".incident__title").text("Incident Deatils: " + reportData.report_id);
+            $(".incident__location").text(`Location: ${reportData.incident_details.location.country} - ${reportData.incident_details.location.city}`);
+            $(".incident__date").text(`Date: ${reportData.incident_details.date.split("T")[0]}`);
+            $(".incident__evidences").html("");
+
+            for (let i = 0; i < reportData.evidence.length; i++) {
+                $(".incident__evidences").append(`<div class="evidence">
+                            <span>${reportData.evidence[i].type}</span>
+                            <br>
+                            <span><a href="http://localhost:8000${reportData.evidence[i].url}">View</a></span>
+                            <br>
+                            <span>${reportData.evidence[i].description}</span>
+                        </div>`);
+            }
+        }
+
+        function hideIncident() {
+            $(".incident").hide();
+
+        }
+
+        async function updateStatus(status) {
+
+            let sa = JSON.stringify(status);
+
+            const response = await fetch(`http://localhost:8000/Reports/${incident_report_id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: sa
+            });
+
+            openDropdown1();
+            $(".table__body").html("");
+            loadReports("", "", "", "");
+        }
+
+        async function findCount() {
+            let violation = $("#violation").val();
+
+            const response = await fetch(`http://localhost:8000/Reports/analytics?violation_type=${violation}`, {
+                method: "GET",
+            });
+
+            const result = await response.json();
+            $(".count").text("Count: " + result.Count);
+        }
+
+        // Select the location inforamtion
+        const map = L.map('map').setView([31.8996, 35.2042], 13); // Default to Ramallah
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        let marker;
+
+        map.on('click', async function (e) {
+            const lat = e.latlng.lat.toFixed(6);
+            const lng = e.latlng.lng.toFixed(6);
+
+            // Remove previous marker if any
+            if (marker) {
+                map.removeLayer(marker);
+            }
+
+            // Place new marker
+            marker = L.marker([lat, lng]).addTo(map);
+
+            try {
+                // Reverse geocode
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+                const data = await response.json();
+
+                const address = data.address;
+                const city = address.city || address.town || address.village || "Unknown";
+                const country = address.country || "Unknown";
+
+                $("#Country").val(country);
+                $("#City").val(city);
+
+                // Show popup
+                marker.bindPopup(`${city}, ${country}`).openPopup();
+            } catch (err) {
+                alert("Failed to fetch location info.");
+            }
+        });
+
+    </script>
+</body>
+
+</html>

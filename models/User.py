@@ -1,10 +1,15 @@
-from datetime import datetime
-
+from datetime import datetime,timezone
+from typing import Optional
 from pydantic import BaseModel
+from enum import Enum
+
+class RoleEnum(str, Enum):
+    Organization = "Organization"
+    Analyst = "Analyst"
 
 class User(BaseModel):
     name: str
     email: str
-    role: str
+    role: RoleEnum
     password: str
-    date: datetime    
+    date: Optional[datetime] = datetime.now(timezone.utc)

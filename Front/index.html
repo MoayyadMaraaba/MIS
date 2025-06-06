@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIS - Home</title>
+    <link rel="stylesheet" href="Styles/main.css">
+</head>
+
+<body>
+
+
+    <!--============== Header ==============-->
+    <header class="header">
+        <div class="header__logo">
+            <h2>
+                <a href="./index.html" class="logo__link">MIS</a>
+            </h2>
+        </div>
+        <nav class="navbar">
+            <ul class="navbar__list">
+                <li class="navbar__item"><a href="" class="navbar__link">Home</a></li>
+                <li class="navbar__item"><a href="#Information" class="navbar__link">Information</a></li>
+                <li class="navbar__item"><a href="" class="navbar__link">Contact us</a></li>
+                <li class="navbar__item"><a href="./pages/Login.html" class="navbar__link">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+    <!--============== Header ==============-->
+
+
+    <!--============== Hero ==============-->
+    <div class="section hero">
+        <div class="hero__left">
+            <h2 class="hero__title">Welcome to MIS</h2>
+            <p class="hero__description">
+                The Human Rights Monitor Management Information System (MIS) is a secure,
+                data-driven platform designed to document, track, and analyze human rights
+                violations.
+            </p>
+            <button class="hero__button">
+                Register
+            </button>
+        </div>
+        <div class="hero__right">
+            <img src="./images/cover1.svg">
+        </div>
+    </div>
+    <!--============== Hero ==============-->
+
+    <!--============== Statistics ==============-->
+    <div class="section statistics" id="Information">
+        <h1 class="section__title">Information</h2>
+            <div class="boxes">
+                <div class="box fade-in">
+                    <div class="box__icon">
+                        🏢
+                    </div>
+                    <div class="box__title">
+                        <h1>Organizations</h1>
+                    </div>
+                    <div class="box__number">50</div>
+                </div>
+                <div class="box fade-in">
+                    <div class="box__icon">
+                        🗄️
+                    </div>
+                    <div class="box__title">
+                        <h1>Cases</h1>
+                    </div>
+                    <div class="box__number">623</div>
+                </div>
+                <div class="box fade-in">
+                    <div class="box__icon">
+                        📑
+                    </div>
+                    <div class="box__title">
+                        <h1>Incidents</h1>
+                    </div>
+                    <div class="box__number">231</div>
+                </div>
+                <div class="box fade-in">
+                    <div class="box__icon">
+                        📑
+                    </div>
+                    <div class="box__title">
+                        <h1>evidences</h1>
+                    </div>
+                    <div class="box__number">412</div>
+                </div>
+            </div>
+    </div>
+    <!--============== Statistics ==============-->
+
+
+    <script>
+        let header = document.getElementsByClassName("header")[0];
+
+        const handleScroll = () => {
+            console.log(window.scrollY)
+            if (window.scrollY > 0) {
+                header.classList.add("move__header");
+            } else {
+                header.classList.remove("move__header");
+            }
+        }
+
+        window.addEventListener('scroll', handleScroll);
+
+        function checkVisibility() {
+            const boxes = document.querySelectorAll('.box');
+            const triggerBottom = window.innerHeight;
+
+            boxes.forEach(box => {
+                const boxTop = box.getBoundingClientRect().top;
+
+                if ((boxTop + 500) < triggerBottom) {
+                    box.classList.add('visible');
+                } else {
+                    box.classList.remove('visible');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', checkVisibility);
+    </script>
+</body>
+
+</html>

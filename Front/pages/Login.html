@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="../Styles/main.css">
+    <style>
+        .grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .square {
+            width: 30px;
+            height: 30px;
+            /* uncomment for animation */
+            /* background-color: var(--DARK-COLOR); */
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="wrapper">
+        <div class="wrapper__left" id="anime">
+            <div class="grid" id="grid"></div>
+        </div>
+        <div class="wrapper__right">
+            <div>
+                <h1 class="form__title">Welcome Back</h1>
+            </div>
+            <div class="inputs">
+
+                <div class="input input__email">
+                    <label for="Email" class="la email__label">Email</label>
+                    <input type="text" class="text__anime email" placeholder="Email" autocomplete="off" id="Email"
+                        name="email" />
+                    <div class="loader">
+                        <div class="progress email__progress"></div>
+                    </div>
+                    <label for="Email" class="email__error error"></label>
+                </div>
+
+                <div class="input input__password">
+                    <label for="Password" class="la password__label">Password</label>
+                    <input type="password" class="text__anime password" placeholder="Password" autocomplete="off"
+                        id="Password" name="password" />
+                    <div class="loader">
+                        <div class="progress password__progress"></div>
+                    </div>
+                    <label for="Email" class="password__error error"></label>
+                </div>
+
+                <div class="input input__forget">
+                    <a href="" class="forget__link">Forget Password ?</a>
+                </div>
+
+                <div class="input">
+                    <button class="submit__button" onclick="login()">Login</button>
+                </div>
+            </div>
+            <div class="form__links">
+                <ul class="form__list">
+                    <li class="form__item"><a href="../index.html" class="form__link">Home</a></li>
+                    <li class="form__item"><a href="../index.html#Information" class="form__link">Information</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        function animate(inputName, inputLabel, progress, errorLabel) {
+            $(`.${inputName}`).focus(function () {
+                $(`.${inputLabel}`).animate({ top: "-15px" });
+                $(`.${progress}`).animate({ width: "370px" });
+                $(`.${errorLabel}`).text("");
+            });
+
+            $(`.${inputName}`).blur(function () {
+                let val = $(`.${inputName}`).val();
+                if (val.trim().length == 0) {
+                    $(`.${inputLabel}`).animate({ top: "10px" });
+                }
+                $(`.${progress}`).animate({ width: "0px" });
+                $(`.${errorLabel}`).text("");
+            });
+        }
+
+        animate("email", "email__label", "email__progress", "email__error");
+        animate("password", "password__label", "password__progress", "password__error");
+
+        const playground = document.getElementById('anime');
+        const grid = document.getElementById('grid');
+
+        let width = playground.clientWidth - 200;
+        let height = playground.clientHeight - 230;
+
+        // Create squares dynamically
+        const columns = Math.floor(width / 30);
+        const rows = Math.floor(height / 30);
+
+        grid.style.gridTemplateColumns = `repeat(${columns}, 30px)`;
+        grid.style.gridTemplateRows = `repeat(${rows}, 30px)`;
+
+        const total = columns * rows;
+
+        for (let i = 0; i < total; i++) {
+            const div = document.createElement('div');
+            div.classList.add('square');
+            grid.appendChild(div);
+        }
+
+        const squares = document.querySelectorAll('.square');
+
+        function randomIndex(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // function animateGrid() {
+        //     anime({
+        //         targets: squares,
+        //         scale: [
+        //             { value: [0, 1.25] },
+        //             { value: 0 }
+        //         ],
+        //         delay: anime.stagger(100, {
+        //             grid: [columns, rows],
+        //             from: randomIndex(0, total - 1)
+        //         }),
+        //         duration: 1000,
+        //         easing: 'easeInOutQuad',
+        //         complete: animateGrid
+        //     });
+        // }
+
+        // animateGrid();
+
+        for (let i = 0; i < total; i++) {
+            let random = randomIndex(0, total - 1);
+            squares[random].style.background = "var(--DARK-COLOR)";
+        }
+
+
+        // Login API
+        async function login() {
+            let email = document.getElementById("Email").value;
+            let password = document.getElementById("Password").value;
+            let errors = 0;
+
+            if (email.trim().length == 0) {
+                $(".email__error").text("Please enter an email.");
+                errors++;
+            }
+
+            if (password.trim().length == 0) {
+                $(".password__error").text("Please enter a password");
+                errors++;
+            }
+
+            if (errors == 0) {
+                const response = await fetch("http://localhost:8000/Authentication/Login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const result = await response.json();
+
+
+                if(result.Message == "User Not Found") {
+                    $(".password__error").text("Email not found.");
+                }
+
+                if (result.Message == "Wrong credentials") {
+                    $(".password__error").text("Wrong password.");
+                }
+
+                if (result.Message == "User LoggedIn") {
+                    const token = result.Token;
+                    const role = result.Role;
+
+                    localStorage.setItem("token", token);
+
+                    if(role == "Admin") {
+                        location.href = "./Admin/index.html";
+                    } else if(role == "Organization") {
+                        location.href = "./Organization/index.html";
+                    } else if(role == "Analyst") {
+                        location.href = "./Analyst/index.html";
+                    }
+                }
+            }
+        }
+
+    </script>
+</body>
+
+</html>

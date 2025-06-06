@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report an incident</title>
+    <link rel="stylesheet" href="../../Styles/main.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        header {
+            height: 100px;
+            background-color: var(--DARK-COLOR);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .username {
+            color: var(--FONT-LCOLOR);
+        }
+
+        main {
+            display: flex;
+        }
+
+        a {
+            display: block;
+        }
+
+        .sidebar {
+            width: 80px;
+            height: calc(100vh);
+            background-color: var(--DARK-COLOR);
+            transition: all 300ms ease-in-out;
+        }
+
+        .sidebar:hover {
+            width: 360px;
+        }
+
+        .sidebar__item {
+            display: flex;
+            height: 80px;
+            transition: all 300ms ease-in-out;
+        }
+
+
+        .head {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            color: #fff;
+            height: 100px;
+        }
+
+
+
+
+        .sidebar__icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 80px;
+            font-size: 1.1rem;
+            color: var(--FONT-LCOLOR);
+        }
+
+        .sidebar__content {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 280px;
+            height: 80px;
+            color: var(--FONT-LCOLOR);
+            font-size: 1.1rem;
+            font-weight: 500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 300ms ease-in-out;
+        }
+
+        .show__content {
+            display: flex;
+            opacity: 1;
+        }
+
+
+        .sidebar__item:hover {
+            background-color: var(--PRIMARY-COLOR);
+        }
+
+        .head:hover {
+            background-color: var(--DARK-COLOR);
+        }
+
+        .sidebar:hover .sidebar__content {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .content {
+            width: 100%;
+        }
+
+        .scrollable {
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        /* Welcome section */
+        .welcome__section {
+            width: 100%;
+            height: 100px;
+            padding: 0 4rem;
+            display: flex;
+            /* justify-content: space-between; */
+            align-items: center;
+            border-bottom: 1px solid #bbb;
+
+        }
+
+        .welcome__title {
+            width: 33.33%;
+        }
+
+
+        .welcome__search {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 33.33%;
+
+        }
+
+        .welcome__role {
+            width: 33.33%;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .welcome__title h2 {
+            font-weight: 500;
+        }
+
+
+        .search__input {
+            width: 400px;
+            height: 45px;
+            border-radius: 5px;
+            border: 1px solid grey;
+            padding: 0 10px;
+        }
+
+        .search__button {
+            width: 45px;
+            height: 45px;
+            background-color: var(--DARK-COLOR);
+            border-radius: 5px;
+            margin: 0 10px;
+            color: #fff;
+        }
+
+        /* Welcome section */
+
+        /* Report section */
+
+        .report {
+            padding: 2rem 4rem 0 4rem;
+        }
+
+        .report__title {
+            font-weight: 500;
+        }
+
+        .input {
+            margin-top: 2rem;
+        }
+
+        .input__label {
+            font-weight: 500;
+            padding-bottom: 1rem;
+        }
+
+
+        .reporter {
+            min-width: 120px;
+            max-width: 200px;
+        }
+
+        .reporter__button {
+            width: 100%;
+            height: 45px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 300ms ease-in-out;
+        }
+
+        .reporter__list {
+            width: 100%;
+            position: relative;
+            z-index: 3500;
+            list-style-type: none;
+            border: 1px solid #bbb;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            visibility: hidden;
+            opacity: 0;
+            display: none;
+            transition: all 300ms ease-in-out;
+        }
+
+        .reporter__item {
+            padding: 1rem;
+            transition: all 300ms ease-in-out;
+        }
+
+        .reporter__item:hover {
+            cursor: pointer;
+            color: #fff;
+            background-color: var(--DARK-COLOR);
+        }
+
+        .remove__radius {
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+            border-bottom: 0px;
+        }
+
+        .show__list {
+            opacity: 1;
+            visibility: visible;
+            display: block;
+        }
+
+
+        .check {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .checkbox {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+            transition: all 300ms ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            i {
+                margin-top: 0.2rem;
+                font-size: 0.8rem;
+                color: #fff;
+            }
+        }
+
+        .checkbox__message {
+            font-size: 0.9rem;
+        }
+
+        .checked {
+            background-color: var(--DARK-COLOR);
+        }
+
+        .text__input {
+            width: 360px;
+            height: 45px;
+            border: 1px solid #bbb;
+            padding: 0 10px;
+            border-radius: 5px;
+            transition: all 300ms ease-in-out;
+        }
+
+        .text__input:focus {
+            border: 1px solid var(--DARK-COLOR);
+        }
+
+        #map {
+            border-radius: 10px;
+            height: 400px;
+            width: 100%;
+        }
+
+        .file__input {
+            display: none;
+        }
+
+        .input__file {
+            width: 360px;
+            height: 55px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            border: 2px dashed var(--DARK-COLOR);
+        }
+
+        .submit__button {
+            width: 360px;
+            font-size: 1rem;
+        }
+
+        /* Report section */
+
+
+        .messageBox {
+            position: fixed;
+            top: 85%;
+            right: 5%;
+            max-width: 360px;
+            width: 100%;
+            height: 100px;
+            background-color: #f5f5f5;
+            border-left: 5px solid rgb(250, 82, 82);
+            display: flex;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.3);
+            z-index: 4000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 300ms ease-in-out;
+        }
+
+        .show__message {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .message__icon {
+            width: 100px;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .message__info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 260px;
+            height: 100%;
+            padding: 1rem;
+            padding-left: 0;
+            font-weight: 500;
+            color: var(--DARK-COLOR);
+        }
+
+        .message__title h4 {
+            font-weight: 400;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <!--============= Sidebar =============-->
+        <aside class="sidebar">
+            <ul class="sidebar__list">
+                <li class="sidebar__item head">
+                    <h1>MIS</h1>
+                </li>
+                <li class="sidebar__item">
+                    <a href="index.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-table-columns"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Dashboard
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <a href="" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-flag"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Report an Incident
+                        </span>
+                    </a>
+                </li>
+
+                <li class="sidebar__item">
+                    <a href="" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-right-from-bracket fa-rotate-180"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Logout
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+        <!--============= Sidebar =============-->
+
+        <!--============= Content =============-->
+        <div class="content">
+            <!--============= Header =============-->
+            <div class="welcome__section">
+                <div class="welcome__title">
+                    <h2>Welcome, Moayyad</h2>
+                </div>
+                <div class="welcome__search">
+                    <input type="text" class="search__input" placeholder="Search" id="Search" name="query" />
+                    <button class="search__button"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <div class="welcome__role">
+                    <h3>Organization</h3>
+                </div>
+            </div>
+            <!--============= Header =============-->
+
+            <div class="scrollable">
+                <!--============= Report form =============-->
+                <div class="report">
+                    <h2 class="report__title">Report an incident</h2>
+                    <div class="report__form">
+                        <!--========= Reporter type =========-->
+                        <div class="input">
+                            <label for="reporter__type" class="input__label">
+                                Reporter type
+                            </label>
+                            <div class="dropdown reporter" id="reporter__type">
+                                <button class="reporter__button" onclick="openReporterType()">Reporter : </button>
+                                <ul class="reporter__list">
+                                    <li class="reporter__item" onclick="selectReporter('Victim')">Victim</li>
+                                    <li class="reporter__item" onclick="selectReporter('Organization')">Organization
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!--========= Reporter type =========-->
+
+
+                        <!--========= Anonymous =========-->
+                        <div class="input anonymous">
+                            <label for="Check" class="input__label">Anonymous</label>
+                            <div class="check" id="Check">
+                                <div class="checkbox" onclick="check()"><i class="fa-solid fa-check"></i></div>
+                                <span class="checkbox__message">Anonymous ?</span>
+                            </div>
+                        </div>
+                        <!--========= Anonymous =========-->
+
+                        <!--========= Contact =========-->
+                        <div class="sub__form contact__inforamtion">
+                            <h3>Contact inforamtion</h3>
+                            <!--========= Email =========-->
+                            <div class="input">
+                                <label for="Email" class="input__label">Email</label>
+                                <input type="text" placeholder="Email" autocomplete="off" name="email"
+                                    class="text__input" id="Email">
+                            </div>
+                            <!--========= Email =========-->
+
+                            <!--========= Phone =========-->
+                            <div class="input">
+                                <label for="Phone" class="input__label">Phone</label>
+                                <input type="text" placeholder="Phone" autocomplete="off" name="Phone"
+                                    class="text__input" id="Phone">
+                            </div>
+                            <!--========= Phone =========-->
+
+                            <!--========= Preferred contact =========-->
+                            <div class="input">
+                                <label for="preferred_contact" class="input__label">Preferred contact</label>
+                                <input type="text" placeholder="preferred contact" autocomplete="off"
+                                    name="preferred_contact" class="text__input" id="preferred_contact">
+                            </div>
+                            <!--========= Preferred contact =========-->
+
+                        </div>
+                        <!--========= Contact =========-->
+
+                        <!--========= Incident Details =========-->
+                        <div class="sub__form incident_details">
+                            <h3>Incident details</h3>
+                            <div class="input">
+                                <label for="Date" class="input__label">Date</label>
+                                <input type="date" placeholder="Date" autocomplete="off" name="Date" class="text__input"
+                                    id="Date">
+                            </div>
+                            <div class="input">
+                                <label for="map" class="input__label">Location</label>
+                                <div id="map"></div>
+                            </div>
+                            <div class="input">
+                                <label for="Description" class="input__label">Description</label>
+                                <input type="text" placeholder="Description" autocomplete="off" name="Description"
+                                    class="text__input" id="Description">
+                            </div>
+                            <div class="input">
+                                <label for="Violations" class="input__label">Violations</label>
+                                <input type="text" placeholder="Violations" autocomplete="off" name="Violations"
+                                    class="text__input" id="Violations">
+                            </div>
+                        </div>
+                        <!--========= Incident Details =========-->
+
+                        <!--========= Evidences =========-->
+                        <div class="sub__form incident_details">
+                            <h3>Evidences</h3>
+                            <div class="input">
+                                <label for="attachements" class="input__file">Evidences</label>
+                                <input type="file" class="file__input" id="attachements" multiple
+                                    onchange="handleAttachments()">
+                            </div>
+                        </div>
+                        <!--========= Evidences =========-->
+
+                        <div id="evDescriptions">
+                        </div>
+
+                        <div class="input">
+                            <button class="submit__button" onclick="submitIncidentReport()">Submit a report</button>
+                        </div>
+                    </div>
+                </div>
+                <!--============= Report form =============-->
+            </div>
+        </div>
+        <!--============= Content =============-->
+        <div class="messageBox">
+            <div class="message__icon">
+                <img src="../../images/xmark.svg" width="30" height="30" class="message__icon__img">
+            </div>
+            <div class="message__info">
+                <div class="message__title">
+                    <h4>.</h4>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://kit.fontawesome.com/0d049d0946.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+
+        /***** Report data *****/
+        let reporter_type = "";
+        let anonymous = false;
+        let country = "";
+        let city = "";
+        let coordinates = [];
+        let evidences = [];
+        let descriptionEvidences = [];
+        /***** Report data *****/
+
+        /***** Form functions *****/
+
+        // Select a Reporter type
+        function selectReporter(type) {
+            if (type != "Victim") {
+                $(".anonymous").hide(100);
+            } else {
+                $(".anonymous").show(100);
+            }
+            $(".reporter__button").text("Reporter : " + type);
+            reporter_type = type;
+            openReporterType();
+        }
+
+        // Select anonymous or not
+        function check() {
+            const checkbox = document.getElementsByClassName("checkbox")[0];
+            anonymous = !anonymous;
+
+            if (anonymous) {
+                $(".contact__inforamtion").hide(100);
+            } else {
+                $(".contact__inforamtion").show(100);
+            }
+
+            checkbox.classList.toggle("checked", anonymous);
+        }
+
+        // Select the location inforamtion
+        const map = L.map('map').setView([31.8996, 35.2042], 13); // Default to Ramallah
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        let marker;
+
+        map.on('click', async function (e) {
+            const lat = e.latlng.lat.toFixed(6);
+            const lng = e.latlng.lng.toFixed(6);
+
+            // Show lat/lng
+            coordinates[0] = lat;
+            coordinates[1] = lng;
+
+            // Remove previous marker if any
+            if (marker) {
+                map.removeLayer(marker);
+            }
+
+            // Place new marker
+            marker = L.marker([lat, lng]).addTo(map);
+
+            try {
+                // Reverse geocode
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+                const data = await response.json();
+
+                const address = data.address;
+                const ci = address.city || address.town || address.village || "Unknown";
+                const co = address.country || "Unknown";
+
+                city = ci;
+                country = co;
+
+                // Show popup
+                marker.bindPopup(`${ci}, ${co}`).openPopup();
+            } catch (err) {
+                alert("Failed to fetch location info.");
+            }
+        });
+
+        function handleAttachments(event) {
+            let files = document.getElementById("attachements").files;
+            evidences = files;
+            for (let i = 0; i < files.length; i++) {
+                $("#evDescriptions").append(`
+                            <div class="input">
+                                <label for="EviudenceDescription" class="input__label">Evidence ${i + 1} Description</label>
+                                <input type="text" placeholder="Evidence Description" autocomplete="off"
+                                    name="Eviudence${i + 1}Description" class="text__input evDescription" id="Eviudence${i + 1}Description">
+                            </div>
+                `)
+            }
+        }
+
+
+
+        async function submitIncidentReport() {
+            const formData = new FormData();
+
+            // Handle Reporter type
+            if (reporter_type.trim().length != 0) {
+                formData.append("reporter_type", reporter_type);
+            } else {
+                displayError("Reporter type is required.");
+                return;
+            }
+
+            // handle contact information
+            if ((reporter_type == "Victim" && !anonymous) || reporter_type == "Organization") {
+                let email = $("#Email").val();
+                let phone = $("#Phone").val();
+                let preferred_contact = $("#preferred_contact").val();
+                let contact_info = {};
+
+                if (email.trim().length != 0) {
+                    contact_info.email = email;
+                } else {
+                    displayError("Email is required.");
+                    return;
+                }
+
+                if (phone.trim().length != 0) {
+                    contact_info.phone = phone;
+                } else {
+                    displayError("Phone is required.");
+                    return;
+                }
+
+                if (preferred_contact.trim().length != 0) {
+                    contact_info.preferred_contact = preferred_contact;
+                } else {
+                    displayError("Preferred contact is required.");
+                    return;
+                }
+
+                formData.append("contact_info", JSON.stringify(contact_info));
+            }
+
+            // Handle incident details
+            let incident_details = {};
+
+            let date = $("#Date").val();
+
+            if (date != "") {
+                incident_details.date = date;
+            } else {
+                displayError("Date is required.");
+                return;
+            }
+
+            if (country != "") {
+                incident_details.location = {
+                    country: country,
+                    city: city,
+                    coordinates: {
+                        type: "Point",
+                        coordinates: coordinates
+                    }
+                }
+            } else {
+                displayError("Location is required.");
+                return;
+            }
+
+            let description = $("#Description").val();
+
+            if (description != "") {
+                incident_details.description = description;
+            } else {
+                displayError("Description is required.");
+                return;
+            }
+
+            let vio = $("#Violations").val();
+
+            if (vio != "") {
+                incident_details.violation_types = vio.split(" ");
+            } else {
+                displayError("Violations is required.");
+                return;
+            }
+
+            formData.append("incident_details", JSON.stringify(incident_details));
+            formData.append("anonymous", anonymous);
+
+            // Handle Evidence and descriptions
+            for (let i = 0; i < evidences.length; i++) {
+                formData.append("Evidences", evidences[i]);
+            }
+            let evDescriptions = $(".evDescription");
+
+            for (let i = 0; i < evDescriptions.length; i++) {
+                descriptionEvidences[i] = $(`#Eviudence${i + 1}Description`).val();
+                formData.append("Descriptions", descriptionEvidences[i])
+            }
+
+
+            const response = await fetch("http://localhost:8000/Reports/", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+            location.href = "./index.html";
+        }
+        /***** Form functions *****/
+
+
+
+        /***** UI functions *****/
+        let isReporterTypeOpen = false;
+        function openReporterType() {
+            if (!isReporterTypeOpen) {
+                $(".reporter__button").addClass("remove__radius");
+                setTimeout(() => {
+                    $(".reporter__list").addClass("show__list");
+                }, 105);
+                isReporterTypeOpen = true;
+            } else {
+                $(".reporter__list").removeClass("show__list")
+                setTimeout(() => {
+                    $(".reporter__button").removeClass("remove__radius");
+                }, 105);
+                isReporterTypeOpen = false;
+            }
+        }
+
+        function displayError(error) {
+            $(".messageBox").addClass("show__message");
+            $(".message__title h4").text(error);
+
+            setTimeout(() => {
+                $(".messageBox").removeClass("show__message");
+                $(".message__title h4").text("");
+            }, 2000);
+        }
+        /***** UI functions *****/
+    </script>
+</body>
+
+</html>
