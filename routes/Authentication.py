@@ -34,6 +34,7 @@ async def createAccount(user: User):
         "Email": user.email,
         "Role": user.role,
         "Password": hashed,
+        "Activation": False,
         "Date": user.date
     }
     
@@ -75,7 +76,7 @@ async def login(email:str = Body(...), password:str = Body(...)):
         return res({"Error": "User Not Found"}, status.HTTP_400_BAD_REQUEST)
 
     # if the user is found then compare the password with hashed password
-    if bcrypt.checkpw(password.encode(), user['Password'].encode()):
+    if bcrypt.checkpw(password.encode(), user['Password'].encode()) and user['Activation'] == True:
         payload = {"userId": str(user['_id']),"role": user['Role']}
         token = create_jwt(payload, 120, user['Role'])
                 

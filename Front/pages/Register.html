@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>MIS - Register</title>
     <link rel="stylesheet" href="../Styles/main.css">
     <style>
         .grid {
@@ -30,9 +30,18 @@
         </div>
         <div class="wrapper__right">
             <div>
-                <h1 class="form__title">Welcome Back</h1>
+                <h1 class="form__title">Welcome</h1>
             </div>
             <div class="inputs">
+                <div class="input input__name">
+                    <label for="Name" class="la name__label">Name</label>
+                    <input type="text" class="text__anime name" placeholder="Name" autocomplete="off" id="Name"
+                        name="name" />
+                    <div class="loader">
+                        <div class="progress name__progress"></div>
+                    </div>
+                    <label for="Name" class="name__error error"></label>
+                </div>
 
                 <div class="input input__email">
                     <label for="Email" class="la email__label">Email</label>
@@ -54,12 +63,21 @@
                     <label for="Email" class="password__error error"></label>
                 </div>
 
-                <div class="input input__forget">
-                    <a href="" class="forget__link">Forget Password ?</a>
+                <div class="input input__account">
+                    <div class="account">
+                        <div class="account__type1" onclick="selectType('account__type1','Analyst')">
+                            <i class="fa-regular fa-user"></i>
+                            Analyst
+                        </div>
+                        <div class="account__type2" onclick="selectType('account__type2','Analyst')">
+                            <i class="fa-solid fa-users"></i>
+                            Organization
+                        </div>
+                    </div>
                 </div>
 
                 <div class="input">
-                    <button class="submit__button" onclick="login()">Login</button>
+                    <button class="submit__button" onclick="Register()">Register</button>
                 </div>
             </div>
             <div class="form__links">
@@ -71,11 +89,13 @@
         </div>
     </section>
 
+    <script src="https://kit.fontawesome.com/0d049d0946.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        integrity="sha256-/JqT3SQfawRcvBIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../main.js"></script>
     <script>
+
         visitorPage();
 
         function animate(inputName, inputLabel, progress, errorLabel) {
@@ -95,6 +115,7 @@
             });
         }
 
+        animate("name", "name__label", "name__progress", "name__error");
         animate("email", "email__label", "email__progress", "email__error");
         animate("password", "password__label", "password__progress", "password__error");
 
@@ -125,36 +146,31 @@
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        // function animateGrid() {
-        //     anime({
-        //         targets: squares,
-        //         scale: [
-        //             { value: [0, 1.25] },
-        //             { value: 0 }
-        //         ],
-        //         delay: anime.stagger(100, {
-        //             grid: [columns, rows],
-        //             from: randomIndex(0, total - 1)
-        //         }),
-        //         duration: 1000,
-        //         easing: 'easeInOutQuad',
-        //         complete: animateGrid
-        //     });
-        // }
-
-        // animateGrid();
-
         for (let i = 0; i < total; i++) {
             let random = randomIndex(0, total - 1);
             squares[random].style.background = "var(--DARK-COLOR)";
         }
 
+        let account = "Analyst";
+
+        function selectType(className, account_type) {
+            $(".account__type1").removeClass("selected__type");
+            $(".account__type2").removeClass("selected__type");
+            account = account_type;
+            $(`.${className}`).addClass("selected__type");
+        }
 
         // Login API
-        async function login() {
+        async function Register() {
+            let name = document.getElementById("Name").value;
             let email = document.getElementById("Email").value;
             let password = document.getElementById("Password").value;
             let errors = 0;
+
+            if (name.trim().length == 0) {
+                $(".name__error").text("Please enter a name.");
+                errors++;
+            }
 
             if (email.trim().length == 0) {
                 $(".email__error").text("Please enter an email.");
@@ -167,39 +183,18 @@
             }
 
             if (errors == 0) {
-                const response = await fetch("http://localhost:8000/Authentication/Login", {
+                const response = await fetch("http://localhost:8000/Authentication/Register", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ name, email, password, role: account })
                 });
 
                 const result = await response.json();
 
-
-                if (result.Message == "User Not Found") {
-                    $(".password__error").text("Email not found.");
-                }
-
-                if (result.Message == "Wrong credentials") {
-                    $(".password__error").text("Wrong password.");
-                }
-
-                if (result.Message == "User LoggedIn") {
-                    const token = result.Token;
-                    const role = result.Role;
-
-                    localStorage.setItem("token", token);
-                    localStorage.setItem("role", role);
-
-                    if (role == "Admin") {
-                        location.href = "./Admin/index.html";
-                    } else if (role == "Organization") {
-                        location.href = "./Organization/index.html";
-                    } else if (role == "Analyst") {
-                        location.href = "./Analyst/index.html";
-                    }
+                if (result.Message == "User created successfully") {
+                    location.href = "./Login.html";
                 }
             }
         }

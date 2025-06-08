@@ -171,7 +171,7 @@ def update_status(report_id: str = Path(...), status: str = Body(...)):
 def get_analytics(violation_type: str):
     db = createConnection()
     reports = db['incident_reports']
-    count = reports.count_documents({"incident_details.violation_types": "Project"})
+    count = reports.count_documents({"incident_details.violation_types": violation_type})
     
     return {"Count": count}
     
