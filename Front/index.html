@@ -23,7 +23,7 @@
                 <li class="navbar__item"><a href="" class="navbar__link">Home</a></li>
                 <li class="navbar__item"><a href="#Information" class="navbar__link">Information</a></li>
                 <li class="navbar__item"><a href="" class="navbar__link">Contact us</a></li>
-                <li class="navbar__item"><a href="./pages/Login.html" class="navbar__link">Login</a></li>
+                <li class="navbar__item hidden"><a href="./pages/Login.html" class="navbar__link">Login</a></li>
             </ul>
         </nav>
     </header>
@@ -39,9 +39,9 @@
                 data-driven platform designed to document, track, and analyze human rights
                 violations.
             </p>
-            <button class="hero__button">
+            <a href="./pages/Register.html" class="hero__button">
                 Register
-            </button>
+            </a>
         </div>
         <div class="hero__right">
             <img src="./images/cover1.svg">
@@ -93,7 +93,10 @@
     </div>
     <!--============== Statistics ==============-->
 
-
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/0d049d0946.js" crossorigin="anonymous"></script>
+    <script src="main.js"></script>
     <script>
         let header = document.getElementsByClassName("header")[0];
 
@@ -124,6 +127,8 @@
         }
 
         window.addEventListener('scroll', checkVisibility);
+
+        disable(isLoggedIn, ".hidden");
     </script>
 </body>
 

@@ -144,6 +144,8 @@ img {
 }
 
 .hero__button {
+    text-align: center;
+    padding-top: 0.9rem;
     width: 520px;
     height: 55px;
     color: var(--FONT-LCOLOR);
@@ -290,6 +292,9 @@ img {
 .input__forget {
     margin-bottom: 1rem;
 }
+.input__account {
+    margin-top: 2rem;
+}
 
 .submit__button {
     width: 370px;
@@ -324,9 +329,44 @@ img {
     color: var(--DARK-COLOR);
 
 }
+
 .error {
     padding-top: 0.2rem;
     font-weight: bold;
-    color: rgb(250,82,82);
+    color: rgb(250, 82, 82);
 }
+
+.account {
+    width: 365px;
+    height: 50px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    display: flex;
+}
+
+.account__type1,
+.account__type2 {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.2rem;
+    transition: all 300ms ease-in-out;
+}
+
+.account__type1 {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.account__type2 {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.selected__type {
+    color: #fff;
+    background-color: var(--DARK-COLOR);
+}
+
+
 /* || Login page */
