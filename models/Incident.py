@@ -11,7 +11,7 @@ class ContactInfo(BaseModel):
 class coor(BaseModel):
     type: str
     coordinates: List[float]
-    
+
 class location(BaseModel):
     country: str
     city: str
@@ -27,6 +27,7 @@ class evidence(BaseModel):
     type: str
     url: str
     description: str
+    date_captured: datetime
     
     
 class Incident(BaseModel):
