@@ -80,7 +80,7 @@ def create_case(case: Case):
 
 # Update case status
 @router.patch("/{case_id}")
-def update_case_status(case_id: str, caseStatus: CaseStatus, authorization: str = Header(..., alias="Authorization")):
+def update_case_status(case_id: str, caseStatus: CaseStatus, authorization: str = Header(...)):
     # Validate the case ID
     if not db.cases.find_one({"case_id": case_id}):
         return res(status_code=status.HTTP_404_NOT_FOUND, content="Case not found.")
