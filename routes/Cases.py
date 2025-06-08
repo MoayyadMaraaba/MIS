@@ -89,7 +89,7 @@ def update_case_status(case_id: str, caseStatus: CaseStatus, authorization: str 
     result = db.cases.update_one({"case_id": case_id}, {"$set": {"status": caseStatus}})
     
     # Get the token from the authorization header
-    token = authorization.split(" ")[0]
+    token = authorization.split(" ")[1]
     # Get the payload from the JWT token 
     # Admin is the only role that can update case status
     payload = helpers.check_jwt(token, "Admin")
@@ -98,7 +98,7 @@ def update_case_status(case_id: str, caseStatus: CaseStatus, authorization: str 
         "case_id": case_id,
         "status": caseStatus,
         "updated_at": datetime.now(timezone.utc),
-        "updated_by": payload["userId"] 
+        "updated_by": {"$oid": payload["userId"]} 
     })
     
     if result.modified_count == 0:
@@ -111,18 +111,18 @@ def update_case_status(case_id: str, caseStatus: CaseStatus, authorization: str 
 # Archive a case 
 # Delete case
 @router.delete("/{case_id}")
-def delete_case(case_id: str, authorization: str = Header(..., alias="Authorization")):
+def delete_case(case_id: str, authorization: str = Header(...)):
 
     # Validate the case ID
     case = db.cases.find_one({"case_id": case_id})
     if not case:
         return res(status_code=status.HTTP_404_NOT_FOUND, content="Case not found.")
     
-    token = authorization.split(" ")[0]
+    token = authorization.split(" ")[1]
     payload = helpers.check_jwt(token, "Admin")
     
     # Archive the case
-    db.cases_archive.insert_one({
+    db.case_archive.insert_one({
         "case_id": case["case_id"],
         "title": case["title"],
         "description": case["description"],
@@ -140,7 +140,7 @@ def delete_case(case_id: str, authorization: str = Header(..., alias="Authorizat
         "updated_at": case["updated_at"],
         "archived_at": datetime.now(timezone.utc),
         # Get userId from the JWT token
-        "archived_by": payload["userId"]})
+        "archived_by":{"$oid": payload["userId"]}})
     
     # Delete the case
     result = db.cases.delete_one({"case_id": case_id})
