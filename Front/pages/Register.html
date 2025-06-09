@@ -188,11 +188,11 @@
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ name, email, password, role: account })
+                    body: JSON.stringify({ _id: "0", Name: name, Email:email, Password: password, Role: account, Activation: false })
                 });
 
                 const result = await response.json();
-
+                console.log(result);
                 if (result.Message == "User created successfully") {
                     location.href = "./Login.html";
                 }

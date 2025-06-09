@@ -17,7 +17,7 @@ from config.db import createConnection
 router = APIRouter()
 
 @router.post("/Register")
-async def createAccount(user: User):
+async def createAccount(user: User = Body(...)):
     db = createConnection()
     users = db['Users']
     
