@@ -9,12 +9,13 @@ from typing import List,Optional
 from random import randint
 import shutil
 import json
-from models.Case import Case, CaseStatus
 import utils.helpers as helpers
+from bson import ObjectId
 
 load_dotenv()
 
 # Models
+from models.Case import Case, CaseStatus
 
 # DB
 from config.db import createConnection
@@ -22,7 +23,19 @@ from config.db import createConnection
 router = APIRouter()
 db = createConnection()
 
+def serialize_doc(doc):
+    doc["_id"] = str(doc["_id"])  # Convert ObjectId to string
+    return doc
 
+def serialize_doc1(doc):
+    def fix_value(v):
+        if isinstance(v, ObjectId):
+            return str(v)
+        if isinstance(v, datetime):
+            return v.isoformat()
+        return v
+
+    return {k: fix_value(v) for k, v in doc.items()}
 
 # Key API Endpoints:
 # • GET /cases/ – List all cases - search/filter functionality (by date, location, violation type). ✅
@@ -49,11 +62,15 @@ def list_cases(
         query["location.country"] = country
     if violation_type:
         query["violation_types"] = violation_type
-    cases = list(db.cases.find(query))
+    
+    print(query)
+    
+    cases = list(db.cases.find(query, {"_id":0}))
     if not cases:
         return res(status_code=status.HTTP_404_NOT_FOUND, content="No cases found.")
 
-    return res(status_code=status.HTTP_200_OK, content=json.dumps(cases, default=str)) 
+    ca = [Case.model_validate(serialize_doc(doc)) for doc in db.cases.find(query)]
+    return {"Cases": ca}
 
 # Retrieve a specific case 
 @router.get("/{case_id}")
@@ -65,14 +82,27 @@ def get_case(case_id: str):
 
     return res(status_code=status.HTTP_200_OK, content=str(case))
 
+@router.get("/history/{case_id}")
+def get_history(case_id: str = Path(...)):
+    records = list(
+        db.case_status_history
+        .find({"case_id": case_id})
+        .sort("updated_at", -1)
+    )
+
+    # Serialize records before returning
+    history_records = [serialize_doc1(doc) for doc in records]
+    return {"History": history_records}    
+     
 
 # Create a new case
 @router.post("/")
-def create_case(case: Case):
+def create_case(case: Case = Body(...)):
     # Validate the request body
     if not case.title or not case.description:
         return res(status_code=status.HTTP_400_BAD_REQUEST,content={"error": "Title and description are required."})
 
+    print(case)
     # Insert the case into the database
     result = db.cases.insert_one(case.model_dump())
 
@@ -80,7 +110,8 @@ def create_case(case: Case):
 
 # Update case status
 @router.patch("/{case_id}")
-def update_case_status(case_id: str, caseStatus: CaseStatus, authorization: str = Header(...)):
+def update_case_status(case_id: str = Path(...), caseStatus: CaseStatus = Body(...), authorization: str = Header(...)):
+    
     # Validate the case ID
     if not db.cases.find_one({"case_id": case_id}):
         return res(status_code=status.HTTP_404_NOT_FOUND, content="Case not found.")
@@ -93,13 +124,14 @@ def update_case_status(case_id: str, caseStatus: CaseStatus, authorization: str 
     # Get the payload from the JWT token 
     # Admin is the only role that can update case status
     payload = helpers.check_jwt(token, "Admin")
+    
     # Add status update to case_status_history
     result_history = db.case_status_history.insert_one({
         "case_id": case_id,
         "status": caseStatus,
         "updated_at": datetime.now(timezone.utc),
-        "updated_by": {"$oid": payload["userId"]} 
-    })
+        "updated_by": ObjectId(payload["userId"])
+    });
     
     if result.modified_count == 0:
         return res(status_code=status.HTTP_400_BAD_REQUEST, content="Failed to update case status.")
@@ -111,7 +143,7 @@ def update_case_status(case_id: str, caseStatus: CaseStatus, authorization: str 
 # Archive a case 
 # Delete case
 @router.delete("/{case_id}")
-def delete_case(case_id: str, authorization: str = Header(...)):
+def delete_case(case_id: str = Path(...), authorization: str = Header(...)):
 
     # Validate the case ID
     case = db.cases.find_one({"case_id": case_id})

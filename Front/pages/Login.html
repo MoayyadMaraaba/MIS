@@ -177,12 +177,13 @@
 
                 const result = await response.json();
 
+                console.log(result);
 
-                if (result.Message == "User Not Found") {
-                    $(".password__error").text("Email not found.");
+                if (result.Error == "User Not Found") {
+                    $(".email__error").text("Email not found.");
                 }
 
-                if (result.Message == "Wrong credentials") {
+                if (result.Error == "Wrong credentials") {
                     $(".password__error").text("Wrong password.");
                 }
 

@@ -159,6 +159,150 @@
         }
 
         /* Welcome section */
+
+        .scrollable {
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        /* Statistics section */
+        .statistics {
+            padding: 2rem 4rem 0 4rem;
+        }
+
+        .statistics__title {
+            font-weight: 500;
+        }
+
+        .boxes1 {
+            width: 100%;
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+
+            gap: 1rem;
+        }
+
+        .box1 {
+            width: 32%;
+            height: 200px;
+            border-radius: 10px;
+            border: 1px solid #bbb;
+        }
+
+        .box1__title {
+            display: flex;
+            justify-content: center;
+            padding: 2rem 2rem 0 2rem;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .box1__icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: var(--PRIMARY-COLOR);
+            background-color: var(--DARK-COLOR);
+        }
+
+        .box1__content {
+            font-weight: 500;
+            font-size: 1.8rem;
+        }
+
+        .box1__number {
+            padding-top: 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Statistics section */
+
+        /* Manage Users section */
+
+        .users {
+            padding: 2rem 4rem 0 4rem;
+        }
+
+        .users__title {
+            font-weight: 500;
+        }
+
+
+        .s {
+            border-top-left-radius: 10px;
+        }
+
+        .rounded-table {
+            margin-top: 1.5rem;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #bbb;
+            background-color: white;
+        }
+
+        .rounded-table th,
+        .rounded-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+
+        .rounded-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .scrollable {
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .rounded-table thead tr:first-child th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .rounded-table thead tr:first-child th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        .rounded-table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 12px;
+        }
+
+        .rounded-table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 12px;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .activate__user {
+            width: 45px;
+            height: 45px;
+            border-radius: 5px;
+            color: #fff;
+            background-color: var(--DARK-COLOR);
+            cursor: pointer;
+            transition: all 300ms ease-in-out;
+        }
+
+        .activate__user:hover {
+            background-color: #000f08ce;
+        }
+
+        /* Manage Users section */
     </style>
 </head>
 
@@ -182,25 +326,35 @@
                     </a>
                 </li>
                 <li class="sidebar__item">
-                    <a href="./ReportIncident.html" class="sidebar__link" style="display: flex;">
+                    <a href="./CreateCase.html" class="sidebar__link" style="display: flex;">
                         <span class="sidebar__icon">
-                            <i class="fa-solid fa-flag"></i>
+                            <i class="fa-solid fa-plus"></i>
                         </span>
                         <span class="sidebar__content">
-                            Report an Incident
+                            Create Case
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <a href="./Cases.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-suitcase"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Cases
                         </span>
                     </a>
                 </li>
 
                 <li class="sidebar__item">
-                    <a href="" class="sidebar__link" style="display: flex;">
+                    <button href="" class="sidebar__link" style="display: flex;" onclick="logout()">
                         <span class="sidebar__icon">
                             <i class="fa-solid fa-right-from-bracket fa-rotate-180"></i>
                         </span>
                         <span class="sidebar__content">
                             Logout
                         </span>
-                    </a>
+                    </button>
                 </li>
             </ul>
         </aside>
@@ -223,6 +377,95 @@
                 </div>
             </div>
             <!--============= Header =============-->
+
+            <div class="scrollable">
+                <!--============= Statistics =============-->
+                <div class="statistics">
+                    <h2 class="statistics__title">Dashboard</h2>
+                    <div class="boxes1">
+                        <div class="box1">
+                            <div class="box1__title">
+                                <div class="box1__icon"><i class="fa-solid fa-suitcase"></i></div>
+                                <div class="box1__content">Cases</div>
+                            </div>
+                            <div class="box1__number cases__count">
+                                <h1></h1>
+                            </div>
+                        </div>
+                        <div class="box1">
+                            <div class="box1__title">
+                                <div class="box1__icon"><i class="fa-solid fa-person-falling"></i></div>
+                                <div class="box1__content">Incidents</div>
+                            </div>
+                            <div class="box1__number incidents__count">
+                                <h1></h1>
+                            </div>
+                        </div>
+                        <div class="box1">
+                            <div class="box1__title">
+                                <div class="box1__icon"><i class="fa-solid fa-camera"></i></div>
+                                <div class="box1__content">Evidences</div>
+                            </div>
+                            <div class="box1__number evidences__count">
+                                <h1></h1>
+                            </div>
+                        </div>
+                        <div class="box1">
+                            <div class="box1__title">
+                                <div class="box1__icon"><i class="fa-solid fa-users"></i></div>
+                                <div class="box1__content">Orgs</div>
+                            </div>
+                            <div class="box1__number organizations__count">
+                                <h1></h1>
+                            </div>
+                        </div>
+                        <div class="box1">
+                            <div class="box1__title">
+                                <div class="box1__icon"><i class="fa-solid fa-chart-simple"></i></div>
+                                <div class="box1__content">Analysts</div>
+                            </div>
+                            <div class="box1__number analysts__count">
+                                <h1></h1>
+                            </div>
+                        </div>
+                        <div class="box1">
+                            <div class="box1__title">
+                                <div class="box1__icon"><i class="fa-regular fa-user"></i></div>
+                                <div class="box1__content">Victims</div>
+                            </div>
+                            <div class="box1__number victims__count">
+                                <h1></h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--============= Statistics =============-->
+
+
+                <!--============= Manage Users =============-->
+                <div class="users">
+                    <h2 class="users__title">Manage Users</h2>
+                    <div class="flex">
+                    </div>
+                    <table class="rounded-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Activation</th>
+                                <th>Activate</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table__body">
+
+                        </tbody>
+                    </table>
+                </div>
+                <!--============= Manage Users =============-->
+            </div>
+
         </div>
         <!--============= Content =============-->
     </main>
@@ -233,7 +476,82 @@
     <script src="https://kit.fontawesome.com/0d049d0946.js" crossorigin="anonymous"></script>
     <script src="../../main.js"></script>
     <script>
+        // Authorization check
         protectedPage('Admin');
+
+        /************* Load from API *************/
+
+        // Load Numbers for Statistics Section
+        async function loadCounts() {
+            const response = await fetch('http://localhost:8000/Admin/Count', {
+                method: "GET"
+            });
+
+            const result = await response.json();
+
+            $(".cases__count h1").text(result.Cases);
+            $(".incidents__count h1").text(result.Incidents);
+            $(".evidences__count h1").text(result.Evidences);
+            $(".organizations__count h1").text(result.Orgs);
+            $(".analysts__count h1").text(result.Analysts);
+            $(".victims__count h1").text(result.Victims);
+        }
+
+        // Load Users for Manage users Section
+        async function loadUsers() {
+            const response = await fetch('http://localhost:8000/Admin/Users', {
+                method: "GET",
+            });
+
+            const result = await response.json();
+            $(".table__body").html("");
+
+            const users = result.Users;
+            for (let i = 0; i < users.length; i++) {
+                let data = encodeURIComponent(JSON.stringify(users[i]));
+                $(".table__body").append(`
+                    <tr>
+                            <td>${i}</td>
+                            <td>${users[i].Name}</td>
+                            <td>${users[i].Email}</td>
+                            <td>${users[i].Role}</td>
+                            <td>${users[i].Activation}</td>
+                            <td> <button class="activate__user" data-user='${data}' onclick="activateUser(this)"><i class="fa-solid fa-user-plus"></i></button> </td>
+                    </tr>
+                `);
+            }
+        }
+
+        // Calls
+        loadCounts();
+        loadUsers();
+        /************* Load from API *************/
+
+        /************* methods *************/
+        async function activateUser(user) {
+            const userData = JSON.parse(decodeURIComponent(user.getAttribute("data-user")));
+
+            let body;
+            if (userData.Activation) {
+                body = "0"
+            } else {
+                body = "1"
+            }
+
+            let de = JSON.stringify(body)
+
+            const response = await fetch(`http://localhost:8000/Admin/User/Activate/${userData._id}`, {
+                method: "PATCH",
+                body: de
+            });
+
+            const result = await response.json();
+
+            if (result.Message == "User updated successfully") {
+                loadUsers();
+            }
+        }
+        /************* methods *************/
     </script>
 </body>
 

@@ -22,17 +22,17 @@ async def createAccount(user: User):
     users = db['Users']
     
     # Check for existing email
-    if users.find_one({"Email": user.email}):
+    if users.find_one({"Email": user.Email}):
         return res({"Error": "Email already exists"}, status.HTTP_400_BAD_REQUEST)
     
     # hashing the password
-    hashed = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt()).decode()
+    hashed = bcrypt.hashpw(user.Password.encode(), bcrypt.gensalt()).decode()
     
     # Create a document for mongo database
     new_user = {
-        "Name": user.name,
-        "Email": user.email,
-        "Role": user.role,
+        "Name": user.Name,
+        "Email": user.Email,
+        "Role": user.Role,
         "Password": hashed,
         "Activation": False,
         "Date": user.date

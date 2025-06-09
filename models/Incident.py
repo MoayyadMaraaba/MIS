@@ -27,7 +27,7 @@ class evidence(BaseModel):
     type: str
     url: str
     description: str
-    date_captured: datetime
+    date_captured: Optional[datetime] = datetime.now(timezone.utc)
     
     
 class Incident(BaseModel):

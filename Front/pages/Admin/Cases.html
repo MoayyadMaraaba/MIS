@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../../Styles/main.css">
+    <style>
+        header {
+            height: 100px;
+            background-color: var(--DARK-COLOR);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .username {
+            color: var(--FONT-LCOLOR);
+        }
+
+        main {
+            display: flex;
+        }
+
+        a {
+            display: block;
+        }
+
+        .sidebar {
+            width: 80px;
+            height: calc(100vh);
+            background-color: var(--DARK-COLOR);
+            transition: all 300ms ease-in-out;
+        }
+
+        .sidebar:hover {
+            width: 360px;
+        }
+
+        .sidebar__item {
+            display: flex;
+            height: 80px;
+            transition: all 300ms ease-in-out;
+        }
+
+
+        .head {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            color: #fff;
+            height: 100px;
+        }
+
+
+
+
+        .sidebar__icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 80px;
+            font-size: 1.1rem;
+            color: var(--FONT-LCOLOR);
+        }
+
+        .sidebar__content {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 280px;
+            height: 80px;
+            color: var(--FONT-LCOLOR);
+            font-size: 1.1rem;
+            font-weight: 500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 300ms ease-in-out;
+        }
+
+        .show__content {
+            display: flex;
+            opacity: 1;
+        }
+
+
+        .sidebar__item:hover {
+            background-color: var(--PRIMARY-COLOR);
+        }
+
+        .head:hover {
+            background-color: var(--DARK-COLOR);
+        }
+
+        .sidebar:hover .sidebar__content {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .content {
+            width: 100%;
+        }
+
+        /* Welcome section */
+        .welcome__section {
+            width: 100%;
+            height: 100px;
+            padding: 0 4rem;
+            display: flex;
+            /* justify-content: space-between; */
+            align-items: center;
+            border-bottom: 1px solid #bbb;
+
+        }
+
+        .welcome__title {
+            width: 33.33%;
+        }
+
+
+        .welcome__search {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 33.33%;
+
+        }
+
+        .welcome__role {
+            width: 33.33%;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .welcome__title h2 {
+            font-weight: 500;
+        }
+
+
+        .search__input {
+            width: 400px;
+            height: 45px;
+            border-radius: 5px;
+            border: 1px solid grey;
+            padding: 0 10px;
+        }
+
+        .search__button {
+            width: 45px;
+            height: 45px;
+            background-color: var(--DARK-COLOR);
+            border-radius: 5px;
+            margin: 0 10px;
+            color: #fff;
+        }
+
+        /* Welcome section */
+
+        .scrollable {
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        /* Manage cases */
+        .cases {
+            padding: 2rem 4rem 0 4rem;
+        }
+
+        .cases__title {
+            font-weight: 500;
+        }
+
+
+        .s {
+            border-top-left-radius: 10px;
+        }
+
+        .rounded-table {
+            margin-top: 1.5rem;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #bbb;
+            background-color: white;
+        }
+
+        .rounded-table th,
+        .rounded-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+
+        .rounded-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .scrollable {
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .rounded-table thead tr:first-child th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .rounded-table thead tr:first-child th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        .rounded-table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 12px;
+        }
+
+        .rounded-table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 12px;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .view__case {
+            width: 45px;
+            height: 45px;
+            border-radius: 5px;
+            color: #fff;
+            background-color: var(--DARK-COLOR);
+            cursor: pointer;
+            transition: all 300ms ease-in-out;
+        }
+
+        .view__case:hover {
+            background-color: #000f08ce;
+        }
+
+        /* Manage cases */
+
+        .case {
+            padding: 2rem 4rem 0 4rem;
+        }
+
+        .info {
+            padding-left: 20px;
+        }
+
+        .status {
+            min-width: 120px;
+            max-width: 200px;
+        }
+
+        .status__button {
+            width: 100%;
+            height: 45px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 300ms ease-in-out;
+        }
+
+        .status__list {
+            width: 100%;
+            position: relative;
+            z-index: 3500;
+            list-style-type: none;
+            border: 1px solid #bbb;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            visibility: hidden;
+            opacity: 0;
+            display: none;
+            transition: all 300ms ease-in-out;
+        }
+
+        .status__item {
+            padding: 1rem;
+            transition: all 300ms ease-in-out;
+        }
+
+        .status__item:hover {
+            cursor: pointer;
+            color: #fff;
+            background-color: var(--DARK-COLOR);
+        }
+
+        .remove__radius {
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+            border-bottom: 0px;
+        }
+
+        .show__list {
+            opacity: 1;
+            visibility: visible;
+            display: block;
+        }
+
+        .manage {
+            margin: 2rem 0 2rem 0;
+        }
+
+        .delete__button {
+            width: 120px;
+            height: 50px;
+            border-radius: 5px;
+            background-color: rgb(250, 82, 82);
+            color: #fff;
+            cursor: pointer;
+            margin-bottom: 2rem;
+        }
+
+        .flex {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .status,
+        .status1 {
+            min-width: 120px;
+            max-width: 180px;
+        }
+
+        .status__button,
+        .status1__button {
+            width: 180px;
+            height: 45px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 300ms ease-in-out;
+        }
+
+        .status__list,
+        .status1__list {
+            width: 180px;
+            position: relative;
+            z-index: 3500;
+            list-style-type: none;
+            border: 1px solid #bbb;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            visibility: hidden;
+            opacity: 0;
+            display: none;
+            transition: all 300ms ease-in-out;
+        }
+
+        .status__item,
+        .status1__item {
+            padding: 1rem;
+            transition: all 300ms ease-in-out;
+        }
+
+        .status__item:hover,
+        .status1__item:hover {
+            cursor: pointer;
+            color: #fff;
+            background-color: var(--DARK-COLOR);
+        }
+
+        .remove__radius {
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+            border-bottom: 0px;
+        }
+
+        .show__list {
+            opacity: 1;
+            visibility: visible;
+            display: block;
+        }
+
+        .text__input {
+            width: 260px;
+            height: 45px;
+            border: 1px solid #bbb;
+            padding: 0 10px;
+            border-radius: 5px;
+            transition: all 300ms ease-in-out;
+        }
+
+        .text__input:focus {
+            border: 1px solid var(--DARK-COLOR);
+        }
+
+        .btn {
+            padding: 0 1rem;
+            color: #fff;
+            border-radius: 5px;
+            height: 45px;
+            background-color: var(--DARK-COLOR);
+        }
+
+        #PriorityDropdown {
+            width: 160px;
+            height: 45px;
+            border-radius: 5px;
+            border: 1px solid #bbb;
+        }
+
+        #PriorityDropdown option {
+            padding: 1rem;
+        }
+
+        .history {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .history__head {
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+        .history__list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .history__item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main>
+        <!--============= Sidebar =============-->
+        <aside class="sidebar">
+            <ul class="sidebar__list">
+                <li class="sidebar__item head">
+                    <h1>MIS</h1>
+                </li>
+                <li class="sidebar__item">
+                    <a href="index.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-table-columns"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Dashboard
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <a href="./CreateCase.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-plus"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Create Case
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <a href="./Cases.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-suitcase"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Cases
+                        </span>
+                    </a>
+                </li>
+
+                <li class="sidebar__item">
+                    <button href="" class="sidebar__link" style="display: flex;" onclick="logout()">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-right-from-bracket fa-rotate-180"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Logout
+                        </span>
+                    </button>
+                </li>
+            </ul>
+        </aside>
+        <!--============= Sidebar =============-->
+
+        <!--============= Content =============-->
+        <div class="content">
+            <!--============= Header =============-->
+            <div class="welcome__section">
+                <div class="welcome__title">
+                    <h2>Welcome</h2>
+                </div>
+                <div class="welcome__search">
+                    <input type="text" class="search__input" placeholder="Search..." id="Search" name="query" />
+                    <button class="search__button" onclick="search()"><i
+                            class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <div class="welcome__role">
+                    <h3>Admin</h3>
+                </div>
+            </div>
+            <!--============= Header =============-->
+
+            <div class="scrollable">
+                <!--============= Manage Cases =============-->
+                <div class="cases">
+                    <h2 class="cases__title">Manage Cases</h2>
+                    <div class="flex">
+                        <div class="filters">
+                            <div class="dropdown status1">
+                                <button class="status1__button" onclick="openDropdown()">Status : </button>
+                                <ul class="status1__list">
+                                    <li class="status1__item" onclick="selectStatus('new')">New</li>
+                                    <li class="status1__item" onclick="selectStatus('under_investigation')">under
+                                        investigation</li>
+                                    <li class="status1__item" onclick="selectStatus('resolved')">Resolved</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div>
+                            <select name="priority" id="PriorityDropdown">
+                                <option value="low">Low</option>
+                                <option value="normal">Normal</option>
+                                <option value="high">High</option>
+                                <option value="All">All</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <!--========= Country =========-->
+                            <input type="text" placeholder="Country" autocomplete="off" name="Country"
+                                class="text__input" id="Country">
+                            <!--========= Country =========-->
+                        </div>
+
+                        <div>
+                            <!--========= violation_type =========-->
+                            <input type="text" placeholder="violation type" autocomplete="off" name="violation_type"
+                                class="text__input" id="violation_type">
+                            <!--========= violation_type =========-->
+                        </div>
+
+                        <div>
+                            <button onclick="filter()" class="btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        </div>
+                    </div>
+                    <table class="rounded-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Date</th>
+                                <th>View</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table__body">
+
+                        </tbody>
+                    </table>
+                </div>
+                <!--============= Manage Cases =============-->
+
+                <!--============= View case =============-->
+                <div style="display: flex;">
+                    <div class="case" id="caseContainer" style="width: 50%;">
+                    </div>
+                    <div class="history" style="width: 25%;">
+                        <h3 class="cases__title history__head">Case Status History</h3>
+                        <ul id="historyList" class="history__list"></ul>
+                    </div>
+                </div>
+                <!--============= View case =============-->
+
+
+            </div>
+        </div>
+        <!--============= Content =============-->
+    </main>
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/0d049d0946.js" crossorigin="anonymous"></script>
+    <script src="../../main.js"></script>
+    <script>
+        // Authorization check
+        protectedPage('Admin');
+
+        let status = "";
+
+        /************* Load from API *************/
+        async function loadCases(status, priority, country, violation_type) {
+            const response = await fetch(`http://localhost:8000/Cases?caseStatus=${status}&priority=${priority}&country=${country}&violation_type=${violation_type}`, {
+                method: "GET",
+            });
+
+            const result = await response.json();
+            $(".table__body").html("");
+
+            if (result.Cases.length != "No cases found.") {
+                for (let i = 0; i < result.Cases.length; i++) {
+                    const caseJSON = encodeURIComponent(JSON.stringify(result.Cases[i]));
+
+                    $(".table__body").append(`<tr>
+                                <td>${result.Cases[i].case_id}</td>
+                                <td>${result.Cases[i].title}</td>
+                                <td>${result.Cases[i].status}</td>
+                                <td>${result.Cases[i].priority}</td>
+                                <td>${result.Cases[i].created_at.split("T")[0]}</td>
+                                <td>
+                                   <button class="view__case" data-case='${caseJSON}' onclick="viewCase(this)"><i class="fa-regular fa-eye"></i></button>
+                                </td>
+                            </tr>
+                `);
+                }
+            }
+        }
+
+        async function loadHistory() {
+            const response = await fetch(`http://localhost:8000/Cases/history/${c.case_id}`, {
+                method: "GET"
+            });
+
+            const result = await response.json();
+
+            $(".history").show();
+            $("#historyList").html("");
+
+            const list = document.getElementById("historyList");
+
+            result.History.forEach(record => {
+                const item = document.createElement("li");
+                $(item).addClass("history__item");
+                item.innerHTML = `
+                    <div><span class="label">Status:</span> ${record.status}</div>
+                    <div><span class="label">Updated At:</span> ${new Date(record.updated_at).toLocaleString()}</div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // Calls
+        loadCases("new", "", "", "");
+        /************* Load from API *************/
+
+        /************* Methods *************/
+        function createSection(title, content) {
+            const section = document.createElement("div");
+            section.classList.add("input");
+            section.innerHTML = `<h3 class="cases__title">${title}</h3>${content}`;
+            return section;
+        }
+        let c;
+
+        function viewCase(caseData) {
+            const Case = JSON.parse(decodeURIComponent(caseData.getAttribute("data-case")));
+            c = Case;
+            const container = document.getElementById("caseContainer");
+
+            $("#caseContainer").html("");
+
+            // General Info
+            container.appendChild(createSection("General Information", `
+                    <p><strong>Case ID:</strong> ${Case.case_id}</p>
+                    <p><strong>Title:</strong> ${Case.title}</p>
+                    <p><strong>Description:</strong> ${Case.description}</p>
+                    <p><strong>Status:</strong> ${Case.status}</p>
+                    <p><strong>Priority:</strong> ${Case.priority}</p>
+                    <p><strong>Created At:</strong> ${Case.created_at.split("T")[0]}</p>
+                    <p><strong>Updated At:</strong> ${Case.updated_at.split("T")[0]}</p>
+                    `));
+
+            // Location
+            container.appendChild(createSection("Location", `
+                <p><strong>Country:</strong> ${Case.location.country}</p>
+                <p><strong>City:</strong> ${Case.location.city}</p>
+                <p><strong>Coordinates:</strong> [${Case.location.coordinates.coordinates.join(", ")}]</p>
+                `));
+
+            // Dates
+            container.appendChild(createSection("Dates", `
+                <p><strong>Date Occurred:</strong> ${Case.date_occurred.split("T")[0]}</p>
+                <p><strong>Date Reported:</strong> ${Case.date_reported.split("T")[0]}</p>
+                `));
+
+            // Violation Types
+            const violations = Case.violation_types.map(v => `<li>${v}</li>`).join("");
+            container.appendChild(createSection("Violation Types", `<ul class="info">${violations}</ul>`));
+
+            // // Victims
+            // const victims = Case.victims.map(v => `<li>${v}</li>`).join("");
+            // container.appendChild(createSection("Victims", `<ul class="info">${victims}</ul>`));
+
+            // Evidence
+            const evidenceList = Case.evidence.map(e => `
+            <li>
+                <a href="http://localhost:8000${e.url}">View</a>
+                Description: ${e.description}
+                <br>
+                Date Captured: ${e.date_captured}
+            </li>
+            `).join("");
+            container.appendChild(createSection("Evidence", `<ul class="info">${evidenceList}</ul>`));
+
+            // Perpetrators
+            const perps = Case.perpetrators.map(p => `<li>Name: ${p.name}, Type: ${p.type}</li>`).join("");
+            container.appendChild(createSection("Perpetrators", `<ul class="info">${perps}</ul>`));
+
+            $("#caseContainer").append(`
+                <div class="manage">
+                    <h3 class="cases__title">Manage</h3
+                    <div class="input" style="padding-top:5rem;">
+                        <label for="reporter__type" class="input__label">
+                            Status
+                        </label>
+                        <div class="dropdown status" id="status__type">
+                            <button class="status__button" onclick="openStatusDropdown()">Status : </button>
+                            <ul class="status__list">
+                                <li class="status__item" onclick="updateStatus('new')">New</li>
+                                <li class="status__item" onclick="updateStatus('under_investigation')">Under
+                                    investigation</li>
+                                <li class="status__item" onclick="updateStatus('resolved')">Resolved</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button onclick="deleteCase()" class="delete__button"><i class="fa-solid fa-trash"></i> Trash</button>    
+                    </div>
+                </div>
+            `);
+
+            loadHistory();
+        }
+
+        async function updateStatus(status) {
+            let data = JSON.stringify(status)
+            const response = await fetch(`http://localhost:8000/Cases/${c.case_id}?caseStatus=${status}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": `Bearer ${localStorage.getItem("token")}`
+                },
+                body: data
+            });
+
+            const result = await response.json();
+        }
+
+        async function deleteCase() {
+            const response = await fetch(`http://localhost:8000/Cases/${c.case_id}`, {
+                method: "DELETE",
+                headers: {
+                    "authorization": `Bearer ${localStorage.getItem("token")}`
+                },
+            });
+
+            const result = await response.json();
+        }
+
+        function selectStatus(stat) {
+            if (stat == status) {
+                status = "";
+                $(".status1__button").text("Status: ");
+                openDropdown();
+            } else {
+                status = stat;
+                $(".status1__button").text("Status: " + stat);
+                openDropdown();
+            }
+        }
+
+        let pri = "";
+
+        $('#PriorityDropdown').change(function () {
+            pri = $(this).val();
+        });
+
+        async function filter() {
+            let stat = status;
+            let priority = pri;
+            let country = $("#Country").val();
+            let violation_type = $("#violation_type").val();
+
+            if (stat == "") {
+                stat = "new";
+            }
+
+            if (pri == "All") {
+                priority = "";
+            }
+
+            loadCases(stat, priority, country, violation_type);
+        }
+
+        /************* Methods *************/
+
+        /************* UI *************/
+        let isStatusDropdownOpen = false;
+        function openStatusDropdown() {
+            if (!isStatusDropdownOpen) {
+                $(".status__button").addClass("remove__radius");
+                setTimeout(() => {
+                    $(".status__list").addClass("show__list");
+                }, 105);
+                isStatusDropdownOpen = true;
+            } else {
+                $(".status__list").removeClass("show__list")
+                setTimeout(() => {
+                    $(".status__button").removeClass("remove__radius");
+                }, 105);
+                isStatusDropdownOpen = false;
+            }
+        }
+
+        let isFilterOpen1 = false;
+        function openDropdown() {
+            if (!isFilterOpen1) {
+                $(".status1__button").addClass("remove__radius");
+                setTimeout(() => {
+                    $(".status1__list").addClass("show__list");
+                }, 105);
+                isFilterOpen1 = true;
+            } else {
+                $(".status1__list").removeClass("show__list")
+                setTimeout(() => {
+                    $(".status1__button").removeClass("remove__radius");
+                }, 105);
+                isFilterOpen1 = false;
+            }
+        }
+        /************* UI *************/
+
+    </script>
+</body>
+
+</html>

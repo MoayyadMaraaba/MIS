@@ -10,7 +10,8 @@ from routes.Authentication import router as authentication_router
 from routes.Authorization import router as authorization_router
 from routes.Cases import router as cases_router
 from routes.Incidents import router as incidents_router
-
+from routes.Victims import router as victims_router
+from routes.Admin import router as admin_router
 app = FastAPI()
 
 # routers
@@ -18,6 +19,8 @@ app.include_router(authentication_router, prefix="/Authentication", tags=["Authe
 app.include_router(authorization_router, prefix="/Authorization", tags=["Authorization"])
 app.include_router(cases_router, prefix="/Cases", tags=["Cases"])
 app.include_router(incidents_router, prefix="/Reports", tags=["Reports"])
+app.include_router(victims_router, prefix="/Victims", tags=["Victims"])
+app.include_router(admin_router, prefix="/Admin", tags=["Admin"])
 
 
 
