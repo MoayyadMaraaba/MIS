@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Victim</title>
+    <link rel="stylesheet" href="../../Styles/main.css">
+    <style>
+        /* Reuse most of your existing styles from CreateVictims.html */
+        header {
+            height: 100px;
+            background-color: var(--DARK-COLOR);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .username {
+            color: var(--FONT-LCOLOR);
+        }
+
+        main {
+            display: flex;
+        }
+
+        a {
+            display: block;
+        }
+
+        .sidebar {
+            width: 80px;
+            height: calc(100vh);
+            background-color: var(--DARK-COLOR);
+            transition: all 300ms ease-in-out;
+        }
+
+        .sidebar:hover {
+            width: 360px;
+        }
+
+        .sidebar__item {
+            display: flex;
+            height: 80px;
+            transition: all 300ms ease-in-out;
+        }
+
+        .head {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            color: #fff;
+            height: 100px;
+        }
+
+        .sidebar__icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 80px;
+            font-size: 1.1rem;
+            color: var(--FONT-LCOLOR);
+        }
+
+        .sidebar__content {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 280px;
+            height: 80px;
+            color: var(--FONT-LCOLOR);
+            font-size: 1.1rem;
+            font-weight: 500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 300ms ease-in-out;
+        }
+
+        .show__content {
+            display: flex;
+            opacity: 1;
+        }
+
+        .sidebar__item:hover {
+            background-color: var(--PRIMARY-COLOR);
+        }
+
+        .head:hover {
+            background-color: var(--DARK-COLOR);
+        }
+
+        .sidebar:hover .sidebar__content {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .content {
+            width: 100%;
+        }
+
+        /* Welcome section */
+        .welcome__section {
+            width: 100%;
+            height: 100px;
+            padding: 0 4rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #bbb;
+        }
+
+        .welcome__title {
+            width: 33.33%;
+        }
+
+        .welcome__search {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 33.33%;
+        }
+
+        .welcome__role {
+            width: 33.33%;
+            display: flex;
+            justify-content: flex-end;
+            margin-left: 33.33%;
+        }
+
+        .welcome__title h2 {
+            font-weight: 500;
+        }
+
+        .search__input {
+            width: 400px;
+            height: 45px;
+            border-radius: 5px;
+            border: 1px solid grey;
+            padding: 0 10px;
+        }
+
+        .search__button {
+            width: 45px;
+            height: 45px;
+            background-color: var(--DARK-COLOR);
+            border-radius: 5px;
+            margin: 0 10px;
+            color: #fff;
+        }
+
+        .scrollable {
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        /* View Victim Form */
+        .view {
+            padding: 2rem 4rem;
+        }
+
+        .view__title {
+            font-weight: 500;
+            margin-bottom: 2rem;
+        }
+
+        .info-row {
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-label {
+            font-weight: 500;
+            width: 200px;
+        }
+
+        .info-value {
+            padding: 10px 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            flex-grow: 1;
+        }
+
+        /* Section styling */
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-section h3 {
+            margin-bottom: 1rem;
+            color: var(--DARK-COLOR);
+        }
+
+        /* Array item styling */
+        .array-item {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        /* Risk level indicators */
+        .risk-indicator {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .risk-low {
+            background-color: #4CAF50;
+        }
+
+        .risk-medium {
+            background-color: #FFC107;
+        }
+
+        .risk-high {
+            background-color: #FF9800;
+        }
+
+        .risk-critical {
+            background-color: #F44336;
+        }
+
+        /* Status indicators */
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background-color: #9E9E9E;
+        }
+
+        .status-active {
+            background-color: #2196F3;
+        }
+
+        .status-completed {
+            background-color: #4CAF50;
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 300ms ease-in-out;
+        }
+
+        .edit-button {
+            background-color: var(--DARK-COLOR);
+            color: white;
+        }
+
+        .edit-button:hover {
+            background-color: #000f08ce;
+        }
+
+        .back-button {
+            background-color: #757575;
+            color: white;
+        }
+
+        .back-button:hover {
+            background-color: #616161;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <!--============= Sidebar =============-->
+        <aside class="sidebar">
+            <ul class="sidebar__list">
+                <li class="sidebar__item head">
+                    <h1>MIS</h1>
+                </li>
+                <li class="sidebar__item">
+                    <a href="index.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-table-columns"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Dashboard
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <a href="./CreateCase.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-plus"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Create Case
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <a href="./Cases.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-suitcase"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Cases
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <a href="./CreateVictim.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Add Victim
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <a href="./Victims.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-users"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Victims
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <button href="" class="sidebar__link" style="display: flex;" onclick="logout()">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-right-from-bracket fa-rotate-180"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Logout
+                        </span>
+                    </button>
+                </li>
+            </ul>
+        </aside>
+        <!--============= Sidebar =============-->
+
+        <!--============= Content =============-->
+        <div class="content">
+            <!--============= Header =============-->
+            <div class="welcome__section">
+                <div class="welcome__title">
+                    <h2>View Victim</h2>
+                </div>
+                
+                <div class="welcome__role">
+                    <h3>Admin</h3>
+                </div>
+            </div>
+            <!--============= Header =============-->
+
+            <div class="scrollable">
+                <!--============= View Victim =============-->
+                <div class="view">
+                    <h2 class="view__title">Victim Details</h2>
+
+                    <!-- Basic Information Section -->
+                    <div class="form-section">
+                        <h3>Basic Information</h3>
+                        
+                        <div class="info-row">
+                            <div class="info-label">Anonymous</div>
+                            <div class="info-value" id="anonymous-value">No</div>
+                        </div>
+                    </div>
+
+                    <!-- Demographics Section -->
+                    <div class="form-section">
+                        <h3>Demographics</h3>
+                        
+                        <div class="info-row">
+                            <div class="info-label">Gender</div>
+                            <div class="info-value" id="gender-value"></div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-label">Age</div>
+                            <div class="info-value" id="age-value"></div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-label">Ethnicity</div>
+                            <div class="info-value" id="ethnicity-value"></div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-label">Occupation</div>
+                            <div class="info-value" id="occupation-value"></div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information Section -->
+                    <div class="form-section">
+                        <h3>Contact Information</h3>
+                        
+                        <div class="info-row">
+                            <div class="info-label">Email</div>
+                            <div class="info-value" id="email-value"></div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-label">Phone</div>
+                            <div class="info-value" id="phone-value"></div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-label">Secure Messaging</div>
+                            <div class="info-value" id="secure_messaging-value"></div>
+                        </div>
+                    </div>
+
+                    <!-- Cases Involved Section -->
+                    <div class="form-section">
+                        <h3>Cases Involved</h3>
+                        <div id="cases-container">
+                            <!-- Cases will be displayed here -->
+                        </div>
+                    </div>
+
+                    <!-- Risk Assessment Section -->
+                    <div class="form-section">
+                        <h3>Risk Assessment</h3>
+                        
+                        <div class="info-row">
+                            <div class="info-label">Risk Level</div>
+                            <div class="info-value" id="risk-level-value"></div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-label">Threats</div>
+                            <div class="info-value" id="threats-value"></div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-label">Protection Needed</div>
+                            <div class="info-value" id="protection-needed-value"></div>
+                        </div>
+                    </div>
+
+                    <!-- Support Services Section -->
+                    <div class="form-section">
+                        <h3>Support Services</h3>
+                        <div id="services-container">
+                            <!-- Services will be displayed here -->
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="action-button back-button" onclick="goBack()">Back to List</button>
+                    </div>
+                </div>
+                <!--============= View Victim =============-->
+            </div>
+        </div>
+        <!--============= Content =============-->
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/0d049d0946.js" crossorigin="anonymous"></script>
+    <script src="../../main.js"></script>
+    <script>
+        // Authorization check
+        protectedPage('Admin');
+
+        // Get victim ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const victimId = urlParams.get('id');
+
+        if (!victimId) {
+            alert('No victim ID provided');
+            window.location.href = './Victims.html';
+        }
+
+        // Fetch victim data
+        async function fetchVictimData() {
+            try {
+                const response = await fetch(`http://localhost:8000/Victims/${victimId}`);
+                const data = await response.json();
+                console.log(response);
+                
+                if (response.ok) {
+                    displayVictimData(data.person);
+                } else {
+                    alert('Failed to fetch victim data');
+                    window.location.href = './Victims.html';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while fetching victim data');
+                window.location.href = './Victims.html';
+            }
+        }
+
+        // Display victim data
+        function displayVictimData(victim) {
+            // Basic info
+            document.getElementById('anonymous-value').textContent = victim.anonymous ? 'Yes' : 'No';
+            
+            // Demographics
+            document.getElementById('gender-value').textContent = victim.demographics.gender || 'Not specified';
+            document.getElementById('age-value').textContent = victim.demographics.age || 'Not specified';
+            document.getElementById('ethnicity-value').textContent = victim.demographics.ethnicity || 'Not specified';
+            document.getElementById('occupation-value').textContent = victim.demographics.occupation || 'Not specified';
+            
+            // Contact info
+            document.getElementById('email-value').textContent = victim.contact_info?.email || 'Not specified';
+            document.getElementById('phone-value').textContent = victim.contact_info?.phone || 'Not specified';
+            document.getElementById('secure_messaging-value').textContent = victim.contact_info?.secure_messaging || 'Not specified';
+            
+            // Cases involved
+            const casesContainer = document.getElementById('cases-container');
+            if (victim.cases_involved && victim.cases_involved.length > 0) {
+                victim.cases_involved.forEach(caseId => {
+                    const caseDiv = document.createElement('div');
+                    caseDiv.className = 'array-item';
+                    caseDiv.innerHTML = `
+                        <div class='info-row'>
+                            <div class="info-label">Case ID</div>
+                            <div class="info-value">${caseId}</div>
+                        </div>
+                    `;
+                    casesContainer.appendChild(caseDiv);
+                });
+            } else {
+                casesContainer.innerHTML = '<div class="info-value">No cases involved</div>';
+            }
+            
+            // Risk assessment
+            const riskLevel = victim.risk_assessment?.level || 'Not specified';
+            const riskLevelElement = document.getElementById('risk-level-value');
+            riskLevelElement.textContent = riskLevel;
+            riskLevelElement.className = 'info-value risk-indicator ' + getRiskClass(riskLevel);
+            
+            const threatsValue = document.getElementById('threats-value');
+            if (victim.risk_assessment?.threats && victim.risk_assessment.threats.length > 0) {
+                threatsValue.textContent = victim.risk_assessment.threats.join(', ');
+            } else {
+                threatsValue.textContent = 'No threats identified';
+            }
+            
+            document.getElementById('protection-needed-value').textContent = 
+                victim.risk_assessment?.protection_needed ? 'Yes' : 'No';
+            
+            // Support services
+            const servicesContainer = document.getElementById('services-container');
+            if (victim.support_services && victim.support_services.length > 0) {
+                victim.support_services.forEach(service => {
+                    const serviceDiv = document.createElement('div');
+                    serviceDiv.className = 'array-item';
+                    serviceDiv.innerHTML = `
+                        <div class="info-row">
+                            <div class="info-label">Service Type</div>
+                            <div class="info-value">${service.type || 'Not specified'}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Provider</div>
+                            <div class="info-value">${service.provider || 'Not specified'}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Status</div>
+                            <div class="info-value status-indicator ${getStatusClass(service.status)}">
+                                ${service.status || 'Not specified'}
+                            </div>
+                        </div>
+                    `;
+                    servicesContainer.appendChild(serviceDiv);
+                });
+            } else {
+                servicesContainer.innerHTML = '<div class="info-value">No support services</div>';
+            }
+        }
+
+        // Helper functions for styling
+        function getRiskClass(level) {
+            switch (level.toLowerCase()) {
+                case 'low': return 'risk-low';
+                case 'medium': return 'risk-medium';
+                case 'high': return 'risk-high';
+                case 'critical': return 'risk-critical';
+                default: return '';
+            }
+        }
+
+        function getStatusClass(status) {
+            switch (status?.toLowerCase()) {
+                case 'pending': return 'status-pending';
+                case 'active': return 'status-active';
+                case 'completed': return 'status-completed';
+                default: return '';
+            }
+        }
+
+       
+        function goBack() {
+            window.location.href = './Victims.html';
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', fetchVictimData);
+    </script>
+</body>
+
+</html>

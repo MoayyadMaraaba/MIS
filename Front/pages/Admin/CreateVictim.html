@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Victim</title>
+    <link rel="stylesheet" href="../../Styles/main.css">
+    <style>
+        /* Reuse most of your existing styles from CreateCase.html */
+        header {
+            height: 100px;
+            background-color: var(--DARK-COLOR);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .username {
+            color: var(--FONT-LCOLOR);
+        }
+
+        main {
+            display: flex;
+        }
+
+        a {
+            display: block;
+        }
+
+        .sidebar {
+            width: 80px;
+            height: calc(100vh);
+            background-color: var(--DARK-COLOR);
+            transition: all 300ms ease-in-out;
+        }
+
+        .sidebar:hover {
+            width: 360px;
+        }
+
+        .sidebar__item {
+            display: flex;
+            height: 80px;
+            transition: all 300ms ease-in-out;
+        }
+
+        .head {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            color: #fff;
+            height: 100px;
+        }
+
+        .sidebar__icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 80px;
+            font-size: 1.1rem;
+            color: var(--FONT-LCOLOR);
+        }
+
+        .sidebar__content {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 280px;
+            height: 80px;
+            color: var(--FONT-LCOLOR);
+            font-size: 1.1rem;
+            font-weight: 500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 300ms ease-in-out;
+        }
+
+        .show__content {
+            display: flex;
+            opacity: 1;
+        }
+
+        .sidebar__item:hover {
+            background-color: var(--PRIMARY-COLOR);
+        }
+
+        .head:hover {
+            background-color: var(--DARK-COLOR);
+        }
+
+        .sidebar:hover .sidebar__content {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .content {
+            width: 100%;
+        }
+
+        /* Welcome section */
+        .welcome__section {
+            width: 100%;
+            height: 100px;
+            padding: 0 4rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #bbb;
+        }
+
+        .welcome__title {
+            width: 33.33%;
+        }
+
+        .welcome__search {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 33.33%;
+        }
+
+        .welcome__role {
+            width: 33.33%;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .welcome__title h2 {
+            font-weight: 500;
+        }
+
+        .search__input {
+            width: 400px;
+            height: 45px;
+            border-radius: 5px;
+            border: 1px solid grey;
+            padding: 0 10px;
+        }
+
+        .search__button {
+            width: 45px;
+            height: 45px;
+            background-color: var(--DARK-COLOR);
+            border-radius: 5px;
+            margin: 0 10px;
+            color: #fff;
+        }
+
+        .scrollable {
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        /* Create Victim Form */
+        .create {
+            padding: 2rem 4rem;
+        }
+
+        .create__title {
+            font-weight: 500;
+            margin-bottom: 2rem;
+        }
+
+        .input {
+            margin-top: 1.5rem;
+        }
+
+        .input__label {
+            font-weight: 500;
+            padding-bottom: 0.5rem;
+            display: block;
+        }
+
+        .text__input {
+            width: 360px;
+            height: 45px;
+            border: 1px solid #bbb;
+            padding: 0 10px;
+            border-radius: 5px;
+            transition: all 300ms ease-in-out;
+        }
+
+        .text__input:focus {
+            border: 1px solid var(--DARK-COLOR);
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .checkbox-container input {
+            margin-right: 10px;
+        }
+
+        .dropdown {
+            position: relative;
+            width: 360px;
+        }
+
+        .dropdown-button {
+            width: 100%;
+            height: 45px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+            padding: 0 10px;
+            text-align: left;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .dropdown-list {
+            position: absolute;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #bbb;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            background-color: white;
+            z-index: 1000;
+            display: none;
+        }
+
+        .dropdown-list.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f1f1f1;
+        }
+
+        .submit__button {
+            margin-top: 2rem;
+            padding: 12px 24px;
+            background-color: var(--DARK-COLOR);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 300ms ease-in-out;
+        }
+
+        .submit__button:hover {
+            background-color: #000f08ce;
+        }
+
+        /* Message box styles (reused from CreateCase.html) */
+        .messageBox {
+            position: fixed;
+            top: 85%;
+            right: 5%;
+            max-width: 360px;
+            width: 100%;
+            height: 100px;
+            background-color: #f5f5f5;
+            border-left: 5px solid rgb(250, 82, 82);
+            display: flex;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.3);
+            z-index: 4000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 300ms ease-in-out;
+        }
+
+        .show__message {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .message__icon {
+            width: 100px;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .message__info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 260px;
+            height: 100%;
+            padding: 1rem;
+            padding-left: 0;
+            font-weight: 500;
+            color: var(--DARK-COLOR);
+        }
+
+        .message__title h4 {
+            font-weight: 400;
+        }
+
+        /* Section styling */
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-section h3 {
+            margin-bottom: 1rem;
+            color: var(--DARK-COLOR);
+        }
+
+        /* Array item styling */
+        .array-item {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .array-item button {
+            margin-top: 0.5rem;
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .add-item-button {
+            margin-top: 1rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <!--============= Sidebar =============-->
+        <aside class="sidebar">
+            <ul class="sidebar__list">
+                <li class="sidebar__item head">
+                    <h1>MIS</h1>
+                </li>
+                <li class="sidebar__item">
+                    <a href="index.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-table-columns"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Dashboard
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <a href="./CreateCase.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-plus"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Create Case
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <a href="./Cases.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-suitcase"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Cases
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <a href="./CreateVictim.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Add Victim
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <a href="./Victims.html" class="sidebar__link" style="display: flex;">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-users"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Victims
+                        </span>
+                    </a>
+                </li>
+                <li class="sidebar__item">
+                    <button href="" class="sidebar__link" style="display: flex;" onclick="logout()">
+                        <span class="sidebar__icon">
+                            <i class="fa-solid fa-right-from-bracket fa-rotate-180"></i>
+                        </span>
+                        <span class="sidebar__content">
+                            Logout
+                        </span>
+                    </button>
+                </li>
+            </ul>
+        </aside>
+        <!--============= Sidebar =============-->
+
+        <!--============= Content =============-->
+        <div class="content">
+            <!--============= Header =============-->
+            <div class="welcome__section">
+                <div class="welcome__title">
+                    <h2>Welcome</h2>
+                </div>
+                <div class="welcome__search">
+                    <input type="text" class="search__input" placeholder="Search..." id="Search" name="query" />
+                    <button class="search__button" onclick="search()"><i
+                            class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <div class="welcome__role">
+                    <h3>Admin</h3>
+                </div>
+            </div>
+            <!--============= Header =============-->
+
+            <div class="scrollable">
+                <!--============= Create Victim =============-->
+                <div class="create">
+                    <h2 class="create__title">Create Victim</h2>
+
+                    <!-- Basic Information Section -->
+                    <div class="form-section">
+                        <h3>Basic Information</h3>
+                        
+                        <div class="input">
+                            <label for="anonymous" class="input__label">Anonymous</label>
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="anonymous" name="anonymous">
+                                <label for="anonymous">Victim wishes to remain anonymous</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Demographics Section -->
+                    <div class="form-section">
+                        <h3>Demographics</h3>
+                        
+                        <div class="input">
+                            <label for="gender" class="input__label">Gender</label>
+                            <select id="gender" class="text__input">
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input">
+                            <label for="age" class="input__label">Age</label>
+                            <input type="number" id="age" class="text__input" min="1" max="120">
+                        </div>
+                        
+                        <div class="input">
+                            <label for="ethnicity" class="input__label">Ethnicity</label>
+                            <input type="text" id="ethnicity" class="text__input" placeholder="Ethnicity">
+                        </div>
+                        
+                        <div class="input">
+                            <label for="occupation" class="input__label">Occupation</label>
+                            <input type="text" id="occupation" class="text__input" placeholder="Occupation">
+                        </div>
+                    </div>
+
+                    <!-- Contact Information Section -->
+                    <div class="form-section">
+                        <h3>Contact Information</h3>
+                        
+                        <div class="input">
+                            <label for="email" class="input__label">Email</label>
+                            <input type="email" id="email" class="text__input" placeholder="Email">
+                        </div>
+                        
+                        <div class="input">
+                            <label for="phone" class="input__label">Phone</label>
+                            <input type="tel" id="phone" class="text__input" placeholder="Phone number">
+                        </div>
+                        
+                        <div class="input">
+                            <label for="secure_messaging" class="input__label">Secure Messaging</label>
+                            <select id="secure_messaging" class="text__input">
+                                <option value="">Select Secure Messaging</option>
+                                <option value="signal">Signal</option>
+                                <option value="whatsapp">WhatsApp</option>
+                                <option value="telegram">Telegram</option>
+                                <option value="none">None</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Cases Involved Section -->
+                    <div class="form-section">
+                        <h3>Cases Involved</h3>
+                        <div id="cases-container">
+                            <!-- Cases will be added here dynamically -->
+                        </div>
+                        <button type="button" class="add-item-button" onclick="addCaseField()">Add Case</button>
+                    </div>
+
+                    <!-- Risk Assessment Section -->
+                    <div class="form-section">
+                        <h3>Risk Assessment</h3>
+                        
+                        <div class="input">
+                            <label for="risk_level" class="input__label">Risk Level</label>
+                            <select id="risk_level" class="text__input">
+                                <option value="">Select Risk Level</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input">
+                            <label for="threats" class="input__label">Threats</label>
+                            <div id="threats-container">
+                                <!-- Threats will be added here dynamically -->
+                            </div>
+                            <button type="button" class="add-item-button" onclick="addThreatField()">Add Threat</button>
+                        </div>
+                        
+                        <div class="input">
+                            <label for="protection_needed" class="input__label">Protection Needed</label>
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="protection_needed" name="protection_needed">
+                                <label for="protection_needed">Victim requires protection</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Support Services Section -->
+                    <div class="form-section">
+                        <h3>Support Services</h3>
+                        <div id="services-container">
+                            <!-- Services will be added here dynamically -->
+                        </div>
+                        <button type="button" class="add-item-button" onclick="addServiceField()">Add Service</button>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="input">
+                        <button type="button" class="submit__button" onclick="createVictim()">Create Victim</button>
+                    </div>
+                </div>
+                <!--============= Create Victim =============-->
+            </div>
+        </div>
+        <!--============= Content =============-->
+
+        <!-- Message Box (for errors) -->
+        <div class="messageBox">
+            <div class="message__icon">
+                <img src="../../images/xmark.svg" width="30" height="30" class="message__icon__img">
+            </div>
+            <div class="message__info">
+                <div class="message__title">
+                    <h4>.</h4>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/0d049d0946.js" crossorigin="anonymous"></script>
+    <script src="../../main.js"></script>
+    <script>
+        // Authorization check
+        protectedPage('Admin');
+
+        /* Victim Data */
+        let victimData = {
+            type: "victim",
+            anonymous: false,
+            demographics: {
+                gender: "",
+                age: 0,
+                ethnicity: "",
+                occupation: ""
+            },
+            contact_info: {
+                email: "",
+                phone: "",
+                secure_messaging: ""
+            },
+            cases_involved: [],
+            risk_assessment: {
+                level: "",
+                threats: [],
+                protection_needed: false
+            },
+            support_services: []
+        };
+
+        /************* Methods *************/
+        function addCaseField() {
+            const container = document.getElementById('cases-container');
+            const caseId = `case-${Date.now()}`;
+            
+            const div = document.createElement('div');
+            div.className = 'array-item';
+            div.id = caseId;
+            
+            div.innerHTML = `
+                <div class="input">
+                    <label for="${caseId}-input" class="input__label">Case ID</label>
+                    <input type="text" id="${caseId}-input" class="text__input" placeholder="Case ID">
+                </div>
+                <button type="button" onclick="removeItem('${caseId}')">Remove</button>
+            `;
+            
+            container.appendChild(div);
+        }
+
+        function addThreatField() {
+            const container = document.getElementById('threats-container');
+            const threatId = `threat-${Date.now()}`;
+            
+            const div = document.createElement('div');
+            div.className = 'array-item';
+            div.id = threatId;
+            
+            div.innerHTML = `
+                <div class="input">
+                    <label for="${threatId}-input" class="input__label">Threat</label>
+                    <input type="text" id="${threatId}-input" class="text__input" placeholder="Threat type">
+                </div>
+                <button type="button" onclick="removeItem('${threatId}')">Remove</button>
+            `;
+            
+            container.appendChild(div);
+        }
+
+        function addServiceField() {
+            const container = document.getElementById('services-container');
+            const serviceId = `service-${Date.now()}`;
+            
+            const div = document.createElement('div');
+            div.className = 'array-item';
+            div.id = serviceId;
+            
+            div.innerHTML = `
+                <div class="input">
+                    <label for="${serviceId}-type" class="input__label">Service Type</label>
+                    <select id="${serviceId}-type" class="text__input">
+                        <option value="">Select Service Type</option>
+                        <option value="legal">Legal</option>
+                        <option value="medical">Medical</option>
+                        <option value="psychological">Psychological</option>
+                        <option value="housing">Housing</option>
+                        <option value="financial">Financial</option>
+                    </select>
+                </div>
+                <div class="input">
+                    <label for="${serviceId}-provider" class="input__label">Provider</label>
+                    <input type="text" id="${serviceId}-provider" class="text__input" placeholder="Service provider">
+                </div>
+                <div class="input">
+                    <label for="${serviceId}-status" class="input__label">Status</label>
+                    <select id="${serviceId}-status" class="text__input">
+                        <option value="">Select Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <button type="button" onclick="removeItem('${serviceId}')">Remove</button>
+            `;
+            
+            container.appendChild(div);
+        }
+
+        function removeItem(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.remove();
+            }
+        }
+
+        function collectFormData() {
+            // Basic info
+            victimData.anonymous = document.getElementById('anonymous').checked;
+            
+            // Demographics
+            victimData.demographics = {
+                gender: document.getElementById('gender').value,
+                age: parseInt(document.getElementById('age').value) || 0,
+                ethnicity: document.getElementById('ethnicity').value,
+                occupation: document.getElementById('occupation').value
+            };
+            
+            // Contact info
+            victimData.contact_info = {
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                secure_messaging: document.getElementById('secure_messaging').value
+            };
+            
+            // Cases involved
+            victimData.cases_involved = [];
+            const caseInputs = document.querySelectorAll('#cases-container .array-item input[type="text"]');
+            caseInputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    victimData.cases_involved.push(input.value.trim());
+                }
+            });
+            
+            // Risk assessment
+            victimData.risk_assessment = {
+                level: document.getElementById('risk_level').value,
+                threats: [],
+                protection_needed: document.getElementById('protection_needed').checked
+            };
+            
+            const threatInputs = document.querySelectorAll('#threats-container .array-item input[type="text"]');
+            threatInputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    victimData.risk_assessment.threats.push(input.value.trim());
+                }
+            });
+            
+            // Support services
+            victimData.support_services = [];
+            const serviceItems = document.querySelectorAll('#services-container .array-item');
+            serviceItems.forEach(item => {
+                const type = item.querySelector('select').value;
+                const provider = item.querySelector('input[type="text"]').value;
+                const status = item.querySelectorAll('select')[1].value;
+                
+                if (type && provider && status) {
+                    victimData.support_services.push({
+                        type: type,
+                        provider: provider,
+                        status: status
+                    });
+                }
+            });
+            
+            // Timestamps
+            const now = new Date().toISOString();
+            victimData.created_at = now;
+            victimData.updated_at = now;
+        }
+
+        function validateForm() {
+            // Basic validation - you can expand this
+            if (!victimData.demographics.gender) {
+                displayError("Gender is required.");
+                return false;
+            }
+            
+            if (victimData.demographics.age <= 0) {
+                displayError("Please enter a valid age.");
+                return false;
+            }
+            
+            if (!victimData.contact_info.phone) {
+                displayError("Phone number is required.");
+                return false;
+            }
+            
+            return true;
+        }
+
+        async function createVictim() {
+            collectFormData();
+            
+            if (!validateForm()) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:8000/Victims/', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(victimData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displaySuccess("Victim created successfully!");
+                    // Optionally reset form or redirect
+                } else {
+                    displayError(result.message || "Failed to create victim");
+                }
+            } catch (error) {
+                displayError("An error occurred while creating victim");
+                console.error("Error:", error);
+            }
+        }
+
+        /************* UI Methods *************/
+        function displayError(message) {
+            $(".messageBox").addClass("show__message");
+            $(".message__title h4").text(message);
+            $(".messageBox").css("border-left-color", "rgb(250, 82, 82)");
+
+            setTimeout(() => {
+                $(".messageBox").removeClass("show__message");
+                $(".message__title h4").text("");
+            }, 3000);
+        }
+
+        function displaySuccess(message) {
+            $(".messageBox").addClass("show__message");
+            $(".message__title h4").text(message);
+            $(".messageBox").css("border-left-color", "#4CAF50");
+
+            setTimeout(() => {
+                $(".messageBox").removeClass("show__message");
+                $(".message__title h4").text("");
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

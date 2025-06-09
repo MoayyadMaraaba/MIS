@@ -21,9 +21,6 @@ from config.db import createConnection
 
 router = APIRouter()
 
-@router.get("/")
-def read_root():
-    return {"Hello": "World"}
 
 class Demographics(BaseModel):
     gender: str
@@ -139,3 +136,20 @@ def get_cases(case_id: str = Path(...)):
             return res({"error": "there is no victims for this case"}, 404)
             
     return {"List victims": listofPersons}
+
+
+@router.get("/")
+def get_Victims():
+    
+    db = createConnection()
+    persons = db['victims']
+
+    Victims = list(persons.find({}))
+
+    for person in Victims:
+        person["_id"] = str(person["_id"])
+    
+    if len(Victims) == 0:
+            return res({"error": "there is no victims for this case"}, 404)
+            
+    return {"List victims": Victims}
