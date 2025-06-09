@@ -462,6 +462,15 @@
             margin-bottom: 1rem;
         }
 
+        .evidence {
+            margin: 1rem 0;
+            box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.1);
+            border: 1px solid #bbb;
+            width: 360px;
+            border-radius: 5px;
+            padding: 1rem;
+        }
+
         .find {
             padding: 2rem 4rem 0 4rem;
         }
@@ -498,14 +507,14 @@
                 </li>
 
                 <li class="sidebar__item">
-                    <a href="" class="sidebar__link" style="display: flex;">
+                    <button href="" class="sidebar__link" style="display: flex;" onclick="logout()">
                         <span class="sidebar__icon">
                             <i class="fa-solid fa-right-from-bracket fa-rotate-180"></i>
                         </span>
                         <span class="sidebar__content">
                             Logout
                         </span>
-                    </a>
+                    </button>
                 </li>
             </ul>
         </aside>
@@ -558,8 +567,8 @@
                                 <div class="box1__icon"><i class="fa-regular fa-user"></i></div>
                                 <div class="box1__content">Victims</div>
                             </div>
-                            <div class="box1__number">
-                                <h1>65</h1>
+                            <div class="box1__number victims__count">
+                                <h1></h1>
                             </div>
                         </div>
                     </div>
@@ -630,6 +639,8 @@
                     <h2 class="incident__title"></h2>
                     <h4 class="incident__location"></h4>
                     <h4 class="incident__date"></h4>
+
+                    <h4 class="" style="margin-top: 1rem;">Evidences</h4>
                     <div class="incident__evidences"></div>
 
                     <div class="filters">
@@ -677,77 +688,28 @@
     <script src="https://kit.fontawesome.com/0d049d0946.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../../main.js"></script>
     <script>
+        // Authorization check
+        protectedPage('Organization')
+
         let isFilterOpen = false;
         let isFilterOpen1 = false;
         let isPopupOpen = false;
         let status = "";
 
+        /************* Load from API *************/
         async function loadNumbers() {
             const response = await fetch(`http://localhost:8000/Reports/Count`, {
                 method: "GET",
             });
 
             const result = await response.json();
+
             $(".incidents__count h1").text(result.Incidents);
             $(".evidences__count h1").text(result.Evidences);
-
+            $(".victims__count h1").text(result.Victims);
         }
-
-        loadNumbers();
-
-        function openDropdown() {
-            if (!isFilterOpen) {
-                $(".status__button").addClass("remove__radius");
-                setTimeout(() => {
-                    $(".status__list").addClass("show__list");
-                }, 105);
-                isFilterOpen = true;
-            } else {
-                $(".status__list").removeClass("show__list")
-                setTimeout(() => {
-                    $(".status__button").removeClass("remove__radius");
-                }, 105);
-                isFilterOpen = false;
-            }
-        }
-
-        function openDropdown1() {
-            if (!isFilterOpen1) {
-                $(".status1__button").addClass("remove__radius");
-                setTimeout(() => {
-                    $(".status1__list").addClass("show__list");
-                }, 105);
-                isFilterOpen1 = true;
-            } else {
-                $(".status1__list").removeClass("show__list")
-                setTimeout(() => {
-                    $(".status1__button").removeClass("remove__radius");
-                }, 105);
-                isFilterOpen1 = false;
-            }
-        }
-
-        function selectStatus(s) {
-            if (s == status) {
-                status = "";
-            } else {
-                status = s;
-                $(".status__button").text("Status : " + s);
-                openDropdown();
-            }
-        }
-
-        function showPopup() {
-            if (!isPopupOpen) {
-                $(".popup").addClass("showPopup");
-                isPopupOpen = true;
-            } else {
-                $(".popup").removeClass("showPopup");
-                isPopupOpen = false;
-            }
-        }
-
 
         async function loadReports(status, country, city, date) {
             const response = await fetch(`http://localhost:8000/Reports?status=${status}&country=${country}&city=${city}&date=${date}`, {
@@ -775,7 +737,21 @@
             }
         }
 
+        // Calls
+        loadNumbers();
         loadReports("", "", "", "");
+        /************* Load from API *************/
+
+        /************* Functions *************/
+        function selectStatus(s) {
+            if (s == status) {
+                status = "";
+            } else {
+                status = s;
+                $(".status__button").text("Status : " + s);
+                openDropdown();
+            }
+        }
 
         function filter() {
             $(".table__body").html("");
@@ -830,22 +806,14 @@
 
             for (let i = 0; i < reportData.evidence.length; i++) {
                 $(".incident__evidences").append(`<div class="evidence">
-                            <span>${reportData.evidence[i].type}</span>
-                            <br>
-                            <span><a href="http://localhost:8000${reportData.evidence[i].url}">View</a></span>
-                            <br>
-                            <span>${reportData.evidence[i].description}</span>
+                            <div>${reportData.evidence[i].type}</div>
+                            <div><a href="http://localhost:8000${reportData.evidence[i].url}">View</a></div>
+                            <div>${reportData.evidence[i].description}</div>
                         </div>`);
             }
         }
 
-        function hideIncident() {
-            $(".incident").hide();
-
-        }
-
         async function updateStatus(status) {
-
             let sa = JSON.stringify(status);
 
             const response = await fetch(`http://localhost:8000/Reports/${incident_report_id}`, {
@@ -871,6 +839,54 @@
             const result = await response.json();
             $(".count").text("Count: " + result.Count);
         }
+        /************* Functions *************/
+
+        /************* UI Methods *************/
+        function openDropdown() {
+            if (!isFilterOpen) {
+                $(".status__button").addClass("remove__radius");
+                setTimeout(() => {
+                    $(".status__list").addClass("show__list");
+                }, 105);
+                isFilterOpen = true;
+            } else {
+                $(".status__list").removeClass("show__list")
+                setTimeout(() => {
+                    $(".status__button").removeClass("remove__radius");
+                }, 105);
+                isFilterOpen = false;
+            }
+        }
+
+        function openDropdown1() {
+            if (!isFilterOpen1) {
+                $(".status1__button").addClass("remove__radius");
+                setTimeout(() => {
+                    $(".status1__list").addClass("show__list");
+                }, 105);
+                isFilterOpen1 = true;
+            } else {
+                $(".status1__list").removeClass("show__list")
+                setTimeout(() => {
+                    $(".status1__button").removeClass("remove__radius");
+                }, 105);
+                isFilterOpen1 = false;
+            }
+        }
+        function showPopup() {
+            if (!isPopupOpen) {
+                $(".popup").addClass("showPopup");
+                isPopupOpen = true;
+            } else {
+                $(".popup").removeClass("showPopup");
+                isPopupOpen = false;
+            }
+        }
+
+        function hideIncident() {
+            $(".incident").hide();
+        }
+        /************* UI Methods *************/
 
         // Select the location inforamtion
         const map = L.map('map').setView([31.8996, 35.2042], 13); // Default to Ramallah

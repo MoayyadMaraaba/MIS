@@ -71,11 +71,14 @@ def get_count():
     db = createConnection()
     reports = db['incident_reports']
     reports_evidences = db['report_evidence']
+    victims = db['victims']
 
     incidents_count = reports.count_documents({})
     evidences_count = reports_evidences.count_documents({})
+    victims_count = victims.count_documents({})
     
-    return {"Incidents": incidents_count, "Evidences": evidences_count}
+    
+    return {"Incidents": incidents_count, "Evidences": evidences_count, "Victims": victims_count}
 
 @router.post("/")
 def add(reporter_type: str = Form(...), 
