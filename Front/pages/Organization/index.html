@@ -464,7 +464,7 @@
 
         .evidence {
             margin: 1rem 0;
-            box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.1);
+            box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.1);
             border: 1px solid #bbb;
             width: 360px;
             border-radius: 5px;
@@ -473,6 +473,23 @@
 
         .find {
             padding: 2rem 4rem 0 4rem;
+        }
+
+        .violation_types {
+            display: flex;
+            gap: 1rem;
+
+        }
+
+        .vio_type {
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            width: 360px;
+            height: 120px;
+            border: 1px solid #bbb;
         }
     </style>
 </head>
@@ -659,18 +676,12 @@
                 <!--============= Incident =============-->
 
                 <div class="find">
-                    <!--========= violation =========-->
-                    <input type="text" placeholder="violation" autocomplete="off" name="violation" class="text__input"
-                        id="violation">
-                    <!--========= violation =========-->
-                    <button onclick="findCount()" class="btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <div class="violation_types">
 
-                    <h3 class="count">Count:</h3>
+                    </div>
                 </div>
             </div>
             <!--============= Content =============-->
-
-
         </div>
         <div class="popup">
             <div class="dispage">
@@ -832,13 +843,25 @@
         async function findCount() {
             let violation = $("#violation").val();
 
-            const response = await fetch(`http://localhost:8000/Reports/analytics?violation_type=${violation}`, {
+            const response = await fetch(`http://localhost:8000/Reports/analytics`, {
                 method: "GET",
             });
 
             const result = await response.json();
-            $(".count").text("Count: " + result.Count);
+            console.log(result);
+
+            $(".violation_types").html("");
+            for (let i = 0; i < result.Violations.length; i++) {
+                $(".violation_types").append(`
+                    <div class="vio_type">
+                        <div><h3>Type: ${result.Violations[i]._id}</h3></div>
+                        <div><h3>Count: ${result.Violations[i].count}</h3></div>
+                    </div>
+                `)
+            }
         }
+
+        findCount();
         /************* Functions *************/
 
         /************* UI Methods *************/
