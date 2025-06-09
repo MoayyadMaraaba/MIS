@@ -1,4 +1,4 @@
-from fastapi import APIRouter,status,Body,UploadFile,File,Form,Path
+from fastapi import APIRouter,status,Body,UploadFile,File,Form,Path,Query
 import bcrypt
 from utils.helpers import res
 from datetime import datetime, timedelta, timezone
@@ -171,10 +171,20 @@ def update_status(report_id: str = Path(...), status: str = Body(...)):
     return res({"message": "Status updated"}, 200)
 
 @router.get("/analytics")
-def get_analytics(violation_type: str):
+def get_analytics():
     db = createConnection()
     reports = db['incident_reports']
-    count = reports.count_documents({"incident_details.violation_types": violation_type})
     
-    return {"Count": count}
+    pipeline = [
+        {"$unwind": "$incident_details.violation_types"},
+        {"$group": {
+            "_id": "$incident_details.violation_types",
+            "count": {"$sum": 1}
+        }},
+        {"$sort": {"count": -1}}
+    ]
+    
+    result = list(reports.aggregate(pipeline))
+    
+    return {"Violations": result}
     
