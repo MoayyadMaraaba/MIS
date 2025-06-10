@@ -545,6 +545,7 @@
                             <div class="dropdown status1">
                                 <button class="status1__button" onclick="openDropdown()">Status : </button>
                                 <ul class="status1__list">
+                                    <li class="status1__item" onclick="selectStatus('all')">All</li>
                                     <li class="status1__item" onclick="selectStatus('new')">New</li>
                                     <li class="status1__item" onclick="selectStatus('under_investigation')">under
                                         investigation</li>
@@ -709,7 +710,7 @@
         }
 
         // Calls
-        loadCases("new", "", "", "");
+        loadCases("", "", "", "");
         /************* Load from API *************/
 
         /************* Methods *************/
@@ -860,8 +861,8 @@
             let country = $("#Country").val();
             let violation_type = $("#violation_type").val();
 
-            if (stat == "") {
-                stat = "new";
+            if (stat == "all") {
+                stat = "";
             }
 
             if (pri == "All") {

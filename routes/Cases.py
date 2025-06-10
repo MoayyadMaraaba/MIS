@@ -47,13 +47,12 @@ def serialize_doc1(doc):
 # List all cases - search/filter functionality (by date, location (city), violation type).
 @router.get("/")
 def list_cases(
-    caseStatus: Optional[CaseStatus] = Query(default=None),
+    caseStatus: Optional[str] = Query(default=None),
     priority: Optional[str] = Query(default=None),
     country: Optional[str] = Query(default=None),
     violation_type: Optional[str] = Query(default=None)
 ):
     query = {}
-
     if caseStatus:
         query["status"] = caseStatus
     if priority:
@@ -63,8 +62,7 @@ def list_cases(
     if violation_type:
         query["violation_types"] = violation_type
     
-    cases = list(db.cases.find(query))
-    
+    cases = list(db.cases.find(query, {"_id":0}))
     if not cases:
         return res(status_code=status.HTTP_404_NOT_FOUND, content="No cases found.")
 
@@ -97,9 +95,6 @@ def get_history(case_id: str = Path(...)):
 # Create a new case
 @router.post("/")
 def create_case(case: Case = Body(...)):
-    # Validate the request body
-    if not case.title or not case.description:
-        return res(status_code=status.HTTP_400_BAD_REQUEST,content={"error": "Title and description are required."})
 
     # Insert the case into the database
     result = db.cases.insert_one(case.model_dump())
