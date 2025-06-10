@@ -283,6 +283,47 @@
         .back-button:hover {
             background-color: #616161;
         }
+
+        /* Risk level update section */
+        .risk-update {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+
+        .risk-update-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .risk-select {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            flex-grow: 1;
+        }
+
+        .update-button {
+            padding: 8px 16px;
+            background-color: var(--DARK-COLOR);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .update-button:hover {
+            background-color: #000f08ce;
+        }
+
+        .success-message {
+            color: #4CAF50;
+            margin-top: 0.5rem;
+            font-weight: 500;
+            display: none;
+        }
     </style>
 </head>
 
@@ -458,6 +499,24 @@
                             <div class="info-label">Protection Needed</div>
                             <div class="info-value" id="protection-needed-value"></div>
                         </div>
+
+                        <!-- Risk Level Update Section -->
+                        <div class="risk-update">
+                            <h4>Update Risk Level</h4>
+                            <div class="risk-update-row">
+                                <select id="risk-level-select" class="risk-select">
+                                    <option value="">Select risk level</option>
+                                    <option value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
+                                    <option value="Critical">Critical</option>
+                                </select>
+                                <button id="update-risk-button" class="update-button">Update</button>
+                            </div>
+                            <div id="update-success-message" class="success-message">
+                                Risk level updated successfully!
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Support Services Section -->
@@ -556,6 +615,11 @@
             riskLevelElement.textContent = riskLevel;
             riskLevelElement.className = 'info-value risk-indicator ' + getRiskClass(riskLevel);
             
+            // Set the current risk level in the select dropdown
+            if (riskLevel && riskLevel !== 'Not specified') {
+                document.getElementById('risk-level-select').value = riskLevel;
+            }
+            
             const threatsValue = document.getElementById('threats-value');
             if (victim.risk_assessment?.threats && victim.risk_assessment.threats.length > 0) {
                 threatsValue.textContent = victim.risk_assessment.threats.join(', ');
@@ -615,13 +679,62 @@
             }
         }
 
-       
+        // Update risk level
+        async function updateRiskLevel() {
+            const selectElement = document.getElementById('risk-level-select');
+            const newRiskLevel = selectElement.value;
+            
+            if (!newRiskLevel) {
+                alert('Please select a risk level');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://localhost:8000/Victims/${victimId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        level: newRiskLevel
+                    })
+                });
+                
+                if (response.ok) {
+                    // Update the displayed risk level
+                    const riskLevelElement = document.getElementById('risk-level-value');
+                    riskLevelElement.textContent = newRiskLevel;
+                    riskLevelElement.className = 'info-value risk-indicator ' + getRiskClass(newRiskLevel);
+                    
+                    // Show success message
+                    const successMessage = document.getElementById('update-success-message');
+                    successMessage.style.display = 'block';
+                    
+                    // Hide message after 3 seconds
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                } else {
+                    const errorData = await response.json();
+                    alert(`Failed to update risk level: ${errorData.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while updating risk level');
+            }
+        }
+
         function goBack() {
             window.location.href = './Victims.html';
         }
 
         // Initialize page
-        document.addEventListener('DOMContentLoaded', fetchVictimData);
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchVictimData();
+            
+            // Add event listener for update button
+            document.getElementById('update-risk-button').addEventListener('click', updateRiskLevel);
+        });
     </script>
 </body>
 
