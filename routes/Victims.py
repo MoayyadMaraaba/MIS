@@ -133,7 +133,7 @@ def get_cases(case_id: str = Path(...)):
         person["_id"] = str(person["_id"])
     
     if len(listofPersons) == 0:
-            return res({"error": "there is no victims for this case"}, 404)
+        return res({"error": "there is no victims for this case"}, 404)
             
     return {"List victims": listofPersons}
 

@@ -113,7 +113,7 @@ def add(reporter_type: str = Form(...),
         "reporter_type": reporter_type,
         "anonymous": anonymous,
         "incident_details": incident.model_dump(),
-        "stats": "New",
+        "status": "New",
         "created_at": datetime.now(timezone.utc)
     }
     

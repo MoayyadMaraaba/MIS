@@ -63,13 +63,12 @@ def list_cases(
     if violation_type:
         query["violation_types"] = violation_type
     
-    print(query)
+    cases = list(db.cases.find(query))
     
-    cases = list(db.cases.find(query, {"_id":0}))
     if not cases:
         return res(status_code=status.HTTP_404_NOT_FOUND, content="No cases found.")
 
-    ca = [Case.model_validate(serialize_doc(doc)) for doc in db.cases.find(query)]
+    ca = [Case.model_validate(serialize_doc(doc)) for doc in cases]
     return {"Cases": ca}
 
 # Retrieve a specific case 
@@ -102,10 +101,12 @@ def create_case(case: Case = Body(...)):
     if not case.title or not case.description:
         return res(status_code=status.HTTP_400_BAD_REQUEST,content={"error": "Title and description are required."})
 
-    print(case)
     # Insert the case into the database
     result = db.cases.insert_one(case.model_dump())
-
+    
+    for victim in case.victims:
+        db.victims.update_one({"_id": ObjectId(victim)}, {"$push": {"cases_involved": str(result.inserted_id)}})
+        
     return res(status_code=status.HTTP_201_CREATED, content="Case created successfully, with id: " + str(result.inserted_id))
 
 # Update case status

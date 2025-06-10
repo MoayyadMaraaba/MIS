@@ -24,6 +24,8 @@
                 <li class="navbar__item"><a href="#Information" class="navbar__link">Information</a></li>
                 <li class="navbar__item"><a href="" class="navbar__link">Contact us</a></li>
                 <li class="navbar__item hidden"><a href="./pages/Login.html" class="navbar__link">Login</a></li>
+                <li class="navbar__item show"><a href="./pages/Login.html" class="navbar__link">Dashboard</a></li>
+                <li class="navbar__item show"><button onclick="logout()" class="navbar__link">Logout</button></li>
             </ul>
         </nav>
     </header>
@@ -60,7 +62,7 @@
                     <div class="box__title">
                         <h1>Organizations</h1>
                     </div>
-                    <div class="box__number">50</div>
+                    <div class="box__number orgs"></div>
                 </div>
                 <div class="box fade-in">
                     <div class="box__icon">
@@ -69,7 +71,7 @@
                     <div class="box__title">
                         <h1>Cases</h1>
                     </div>
-                    <div class="box__number">623</div>
+                    <div class="box__number cases"></div>
                 </div>
                 <div class="box fade-in">
                     <div class="box__icon">
@@ -78,7 +80,7 @@
                     <div class="box__title">
                         <h1>Incidents</h1>
                     </div>
-                    <div class="box__number">231</div>
+                    <div class="box__number incidents"></div>
                 </div>
                 <div class="box fade-in">
                     <div class="box__icon">
@@ -87,7 +89,7 @@
                     <div class="box__title">
                         <h1>evidences</h1>
                     </div>
-                    <div class="box__number">412</div>
+                    <div class="box__number evidences"></div>
                 </div>
             </div>
     </div>
@@ -101,7 +103,6 @@
         let header = document.getElementsByClassName("header")[0];
 
         const handleScroll = () => {
-            console.log(window.scrollY)
             if (window.scrollY > 0) {
                 header.classList.add("move__header");
             } else {
@@ -129,6 +130,25 @@
         window.addEventListener('scroll', checkVisibility);
 
         disable(isLoggedIn, ".hidden");
+        enable(!isLoggedIn, ".show");
+
+
+        async function loadCounts() {
+            const response = await fetch('http://localhost:8000/Admin/Count', {
+                method: "GET"
+            });
+
+            const result = await response.json();
+            console.log(result);
+
+            $(".cases").text(result.Cases);
+            $(".incidents").text(result.Incidents);
+            $(".evidences").text(result.Evidences);
+            $(".orgs").text(result.Orgs);
+        }
+
+        loadCounts();
+
     </script>
 </body>
 

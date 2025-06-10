@@ -427,12 +427,12 @@
             margin-bottom: 10px;
         }
 
-        .history__list {
+        .history__list,.victims__list {
             list-style-type: none;
             padding-left: 0;
         }
 
-        .history__item {
+        .history__item,.victim__item {
             margin-bottom: 10px;
             padding: 10px;
             border: 1px solid #eee;
@@ -454,7 +454,7 @@
                 <li class="sidebar__item head">
                     <h1>MIS</h1>
                 </li>
-<li class="sidebar__item">
+                <li class="sidebar__item">
                     <a href="index.html" class="sidebar__link" style="display: flex;">
                         <span class="sidebar__icon">
                             <i class="fa-solid fa-table-columns"></i>
@@ -605,6 +605,10 @@
                     <div class="history" style="width: 25%;">
                         <h3 class="cases__title history__head">Case Status History</h3>
                         <ul id="historyList" class="history__list"></ul>
+
+
+                        <h3 class="cases__title history__head">Victims</h3>
+                        <ul id="victimsList" class="victims__list"></ul>
                     </div>
                 </div>
                 <!--============= View case =============-->
@@ -633,6 +637,7 @@
             });
 
             const result = await response.json();
+
             $(".table__body").html("");
 
             if (result.Cases.length != "No cases found.") {
@@ -677,6 +682,32 @@
             });
         }
 
+        async function loadVictims() {
+            const response = await fetch(`http://localhost:8000/Victims/case/${c._id}`, {
+                method: "GET"
+            });
+
+            const result = await response.json();
+            console.log(result);
+
+            $("#victimsList").html("");
+
+            const list = document.getElementById("victimsList");
+
+            result['List victims'].forEach(record => {
+                const item = document.createElement("li");
+                $(item).addClass("victim__item");
+                item.innerHTML = `
+                    <div><span class="label">email:</span> ${record.contact_info.email}</div>
+                    <div><span class="label">gender:</span> ${record.demographics.gender}</div>
+                    <div><span class="label">age:</span> ${record.demographics.age}</div>
+                    <div><span class="label">ethnicity:</span> ${record.demographics.ethnicity}</div>
+
+                `;
+                list.appendChild(item);
+            });
+        }
+
         // Calls
         loadCases("new", "", "", "");
         /************* Load from API *************/
@@ -690,7 +721,7 @@
         }
         let c;
 
-        function viewCase(caseData) {
+        async function viewCase(caseData) {
             const Case = JSON.parse(decodeURIComponent(caseData.getAttribute("data-case")));
             c = Case;
             const container = document.getElementById("caseContainer");
@@ -769,6 +800,15 @@
             `);
 
             loadHistory();
+
+            const response = await fetch(`http://localhost:8000/Admin/case?case_id=${c.case_id}`, {
+                method: "GET"
+            });
+
+            const result = await response.json();
+            c._id = result._id
+
+            loadVictims();
         }
 
         async function updateStatus(status) {

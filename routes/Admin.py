@@ -82,5 +82,18 @@ def get_victims():
         person["_id"] = str(person["_id"])
     
     return {"Victims": listofPersons}
+
+@router.get("/case")
+def get_case_id(case_id: str):
+    db = createConnection()
+    cases = db['cases']
+    
+    result = cases.find_one({"case_id": case_id})
+    
+    if result is not None:
+        return {"_id": str(result["_id"])}
+    
+    return {"_id": ""}
+
     
 

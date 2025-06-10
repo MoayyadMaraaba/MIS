@@ -182,11 +182,12 @@
 
         .violation_types {
             display: flex;
+            flex-wrap: wrap;
             gap: 1rem;
-
         }
 
         .vio_type {
+            flex-grow: 1;
             border-radius: 5px;
             display: flex;
             align-items: center;
@@ -259,14 +260,51 @@
         }
 
         .chart__box {
-            flex-grow: 1;
-            min-height: 300px;
+            width: 49%;
+            min-height: 400px;
             border-radius: 10px;
             border: 1px solid #bbb;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 2rem;
+        }
+
+        .date__form {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .date__input {
+            width: 220px;
+            height: 45px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+            padding: 0 10px;
+        }
+
+        .filter__btn {
+            width: 45px;
+            height: 45px;
+            background-color: var(--DARK-COLOR);
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .h {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .export__button {
+            width: 120px;
+            height: 45px;
+            color: #fff;
+            border-radius: 5px;
+
+            background-color: var(--DARK-COLOR);
         }
     </style>
 </head>
@@ -325,6 +363,32 @@
 
             <div class="scrollable">
                 <div class="statistics">
+                    <div class="statistics__section">
+                        <h2 class="statistics__section__title">Filters</h2>
+                        <div class="h">
+                            <div class="date__form">
+                                <div class="input">
+                                    <label for="from">From</label>
+                                    <input type="date" class="date__input" id="from">
+                                </div>
+                                <div class="input">
+                                    <label for="to">To</label>
+                                    <input type="date" class="date__input" id="to">
+                                </div>
+                                <div class="input">
+                                    <label for="to">.</label>
+                                    <button class="filter__btn" onclick="filter()"><i
+                                            class="fa-solid fa-magnifying-glass"></i></button>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="export__button" onclick="exportData()"><i
+                                        class="fa-solid fa-download"></i> export</button>
+                            </div>
+                        </div>
+                    </div>
+
+
 
                     <div class="statistics__section">
                         <h2 class="statistics__section__title">Charts</h2>
@@ -334,8 +398,6 @@
                             </div>
                             <div class="chart__box">
                                 <canvas id="date_count"></canvas>
-                            </div>
-                            <div class="chart__box">
                             </div>
                         </div>
                     </div>
@@ -385,8 +447,8 @@
         /* Data */
 
         /************ Load from API  ************/
-        async function loadViolations() {
-            const response = await fetch('http://localhost:8000/analytics/violations', {
+        async function loadViolations(startDate, endDate) {
+            const response = await fetch(`http://localhost:8000/analytics/violations?start=${startDate}&end=${endDate}`, {
                 method: "GET"
             });
 
@@ -406,6 +468,7 @@
         }
 
         const map = L.map('map').setView([31.8996, 35.2042], 6);
+        let markerLayer = L.layerGroup().addTo(map);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
@@ -414,10 +477,12 @@
         let coordinates = [null, null];
         let marker;
 
-        async function loadGeoData() {
+        async function loadGeoData(startDate, endDate) {
             try {
-                const response = await fetch('http://localhost:8000/analytics/geodata');
+                const response = await fetch(`http://localhost:8000/analytics/geodata?start=${startDate}&end=${endDate}`);
                 const result = await response.json();
+
+                markerLayer.clearLayers();
 
                 const reports = result.geodata;
                 reports.forEach(report => {
@@ -435,7 +500,7 @@
                 `;
 
                     L.marker([coords[0], coords[1]])
-                        .addTo(map)
+                        .addTo(markerLayer)
                         .bindPopup(popupContent);
                 });
 
@@ -444,10 +509,9 @@
             }
         }
 
-
-        async function loadTime() {
+        async function loadTime(startDate, endDate) {
             try {
-                const response = await fetch('http://localhost:8000/analytics/timeline');
+                const response = await fetch(`http://localhost:8000/analytics/timeline?start=${startDate}&end=${endDate}`);
                 const result = await response.json();
 
                 const data = result.timeline;
@@ -470,27 +534,56 @@
             }
         }
 
+        async function exportData() {
+            let start = $("#from").val();
+            let end = $("#to").val();
+
+            const response = await fetch(`http://localhost:8000/analytics/export?start=${start}&end=${end}`);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'incidents.csv';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        }
 
         // Calls
-        loadViolations();
-        loadGeoData();
-        loadTime();
+        loadViolations("", "");
+        loadGeoData("", "");
+        loadTime("", "");
 
         /************ Load from API  ************/
+        let vio_chart;
+        let incident_chart;
+
+        function filter() {
+            let start = $("#from").val();
+            let end = $("#to").val();
+
+            loadViolations(start, end);
+            vio_chart.destroy();
+            incident_chart.destroy();
+
+            loadTime(start, end);
+            loadGeoData(start, end);
+        }
 
         /************ Charts  ************/
         function drawCharts(vio) {
             let lables = [];
             let data = [];
 
+
             for (let i = 0; i < vio.length; i++) {
                 lables.push(vio[i]._id);
                 data.push(parseInt(vio[i].count));
             }
 
-
             const ctx = document.getElementById('violation_type');
-            new Chart(ctx, {
+            vio_chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: lables,
@@ -536,7 +629,7 @@
 
             const ctx = document.getElementById('date_count');
 
-            new Chart(ctx,
+            incident_chart = new Chart(ctx,
                 {
                     type: 'line',
                     data: {
@@ -545,15 +638,16 @@
                             label: 'Violations count',
                             data: data1,
                             fill: false,
-                            borderColor: 'blue',
+                            borderColor: '#000f08',
                             tension: 0.4,
-                            pointBackgroundColor: 'blue'
+                            pointBackgroundColor: '#000f08'
                         }]
                     },
                     options: {
                         scales: {
                             y: {
                                 beginAtZero: true,
+                                grace: '5%',
                                 title: {
                                     display: true,
                                     text: 'Incidents'

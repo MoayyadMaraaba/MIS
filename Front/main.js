@@ -50,12 +50,12 @@ async function protectedPage(role) {
 }
 
 function visitorPage() {
-    if(isLoggedIn) {
-        if(isAdminLoggedIn) {
+    if (isLoggedIn) {
+        if (isAdminLoggedIn) {
             location.replace("/Front/pages/Admin/index.html");
-        } else if(isOrganizationLoggedIn) {
+        } else if (isOrganizationLoggedIn) {
             location.replace("/Front/pages/Organization/index.html");
-        } else if(isAnalystLoggedIn) {
+        } else if (isAnalystLoggedIn) {
             location.replace("/Front/pages/Analyst/index.html");
         }
     }
@@ -67,6 +67,12 @@ function logout() {
 }
 
 function disable(cond, el) {
+    if (cond) {
+        $(el).remove();
+    }
+}
+
+function enable(cond, el) {
     if (cond) {
         $(el).remove();
     }
