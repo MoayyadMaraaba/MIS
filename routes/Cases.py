@@ -132,7 +132,7 @@ def update_case_status(case_id: str = Path(...), caseStatus: CaseStatus = Body(.
         "status": caseStatus,
         "updated_at": datetime.now(timezone.utc),
         "updated_by": ObjectId(payload["userId"])
-    });
+    })
     
     if result.modified_count == 0:
         return res(status_code=status.HTTP_400_BAD_REQUEST, content="Failed to update case status.")
@@ -173,7 +173,7 @@ def delete_case(case_id: str = Path(...), authorization: str = Header(...)):
         "updated_at": case["updated_at"],
         "archived_at": datetime.now(timezone.utc),
         # Get userId from the JWT token
-        "archived_by":{"$oid": payload["userId"]}})
+        "archived_by":ObjectId(payload["userId"])})
     
     # Delete the case
     result = db.cases.delete_one({"case_id": case_id})
