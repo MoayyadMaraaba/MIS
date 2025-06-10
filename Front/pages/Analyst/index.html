@@ -170,6 +170,16 @@
             margin-bottom: 4rem;
         }
 
+
+        .statistics__section {
+            margin-bottom: 2rem;
+        }
+
+        .statistics__section__title {
+            font-weight: 500;
+            margin-bottom: 2rem;
+        }
+
         .violation_types {
             display: flex;
             gap: 1rem;
@@ -228,6 +238,7 @@
             border: 1px solid #bbb;
             border-radius: 5px;
         }
+
         .filter__button {
             width: 160px;
             height: 45px;
@@ -235,6 +246,27 @@
             color: #fff;
             border-radius: 5px;
             background-color: var(--DARK-COLOR);
+        }
+
+        #map {
+            border-radius: 10px;
+        }
+
+        .charts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .chart__box {
+            flex-grow: 1;
+            min-height: 300px;
+            border-radius: 10px;
+            border: 1px solid #bbb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
         }
     </style>
 </head>
@@ -281,8 +313,7 @@
                     <h2>Welcome</h2>
                 </div>
                 <div class="welcome__search">
-                    <input type="text" class="search__input" placeholder="Search by report id" id="Search"
-                        name="query" />
+                    <input type="text" class="search__input" placeholder="Search..." id="Search" name="query" />
                     <button class="search__button" onclick="search()"><i
                             class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
@@ -294,28 +325,44 @@
 
             <div class="scrollable">
                 <div class="statistics">
-                    <h2 style="margin-bottom: 1rem;">Violations</h2>
-                    <div class="violation_types">
 
+                    <div class="statistics__section">
+                        <h2 class="statistics__section__title">Charts</h2>
+                        <div class="charts">
+                            <div class="chart__box">
+                                <canvas id="violation_type"></canvas>
+                            </div>
+                            <div class="chart__box">
+                                <canvas id="date_count"></canvas>
+                            </div>
+                            <div class="chart__box">
+                            </div>
+                        </div>
                     </div>
 
-                    <h2 style="margin: 1rem 0;">Map visualization</h2>
+                    <div class="statistics__section">
+                        <h2 class="statistics__section__title">Violations</h2>
+                        <div class="violation_types"></div>
+                    </div>
 
-                    <div id="map" style="height: 500px;"></div>
+                    <div class="statistics__section">
+                        <h2 class="statistics__section__title">Map visualization</h2>
+                        <div id="map" style="height: 500px;"></div>
+                    </div>
 
-                    <h2 style="margin-top: 2rem;">Cases Over Time</h2>
-
-                    <table id="timelineTable">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Case Count</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-
+                    <div class="statistics__section">
+                        <h2 class="statistics__section__title">Cases Over Time</h2>
+                        <table id="timelineTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Incidents</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -327,10 +374,15 @@
     <script src="https://kit.fontawesome.com/0d049d0946.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="../../main.js"></script>
     <script>
         // Authorize check
         protectedPage("Analyst");
+
+        /* Data */
+        let violations = [];
+        /* Data */
 
         /************ Load from API  ************/
         async function loadViolations() {
@@ -339,6 +391,8 @@
             });
 
             const result = await response.json();
+
+            drawCharts(result.Violations);
 
             $(".violation_types").html("");
             for (let i = 0; i < result.Violations.length; i++) {
@@ -396,8 +450,8 @@
                 const response = await fetch('http://localhost:8000/analytics/timeline');
                 const result = await response.json();
 
-                console.log(result);
                 const data = result.timeline;
+
 
                 const tbody = document.querySelector("#timelineTable tbody");
                 tbody.innerHTML = "";
@@ -407,6 +461,9 @@
                     row.innerHTML = `<td>${item.date}</td><td>${item.count}</td>`;
                     tbody.appendChild(row);
                 });
+
+                drawSecondChart(data);
+
 
             } catch (error) {
                 console.error("Error fetching timeline data:", error);
@@ -420,6 +477,101 @@
         loadTime();
 
         /************ Load from API  ************/
+
+        /************ Charts  ************/
+        function drawCharts(vio) {
+            let lables = [];
+            let data = [];
+
+            for (let i = 0; i < vio.length; i++) {
+                lables.push(vio[i]._id);
+                data.push(parseInt(vio[i].count));
+            }
+
+
+            const ctx = document.getElementById('violation_type');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: lables,
+                    datasets: [{
+                        label: 'Violations count',
+                        data: data,
+                        borderWidth: 1,
+                        borderColor: '#000f08',
+                        backgroundColor: '#000f08',
+                        barPercentage: 0.4,
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            grace: '5%',
+                            ticks: {
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) {
+                                        return value;
+                                    }
+                                },
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+
+        }
+
+        function drawSecondChart(vio) {
+            let labels = [];
+            let data1 = [];
+
+
+            for (let i = 0; i < vio.length; i++) {
+                labels.push(vio[i].date);
+                data1.push(vio[i].count);
+            }
+
+            const ctx = document.getElementById('date_count');
+
+            new Chart(ctx,
+                {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Violations count',
+                            data: data1,
+                            fill: false,
+                            borderColor: 'blue',
+                            tension: 0.4,
+                            pointBackgroundColor: 'blue'
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Incidents'
+                                },
+                                ticks: {
+                                    callback: function (value) {
+                                        if (Number.isInteger(value)) return value;
+                                    },
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+
+            new Chart(ctx, config);
+        }
+        /************ Charts  ************/
     </script>
 </body>
 
