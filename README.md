@@ -71,8 +71,9 @@ MIS/
 
 ### Prerequisites
 - Python 3.8+
-- MongoDB
-- Node.js (for frontend dependencies, if needed)
+- MongoDB (Community Edition or Atlas)
+- Web browser (for frontend access)
+- Text editor or IDE (optional for development)
 
 ### Environment Variables
 Create a `.env` file in the root directory:
@@ -93,7 +94,7 @@ JWT_SECRET=your_jwt_secret_key
 
 2. **Install Python dependencies**
    ```bash
-   pip install fastapi uvicorn pymongo python-dotenv bcrypt python-jose python-multipart
+   pip install fastapi uvicorn pymongo python-dotenv bcrypt pyjwt python-multipart pydantic
    ```
 
 3. **Set up MongoDB**
@@ -107,7 +108,7 @@ JWT_SECRET=your_jwt_secret_key
 
 5. **Access the application**
    - Backend API: `http://localhost:8000`
-   - Frontend: `http://localhost:5500/Front/index.html`
+   - Frontend: `http://localhost:5500/Front/index.html` (using live server)
    - API Documentation: `http://localhost:8000/docs`
 
 ## 🔐 User Roles & Permissions
